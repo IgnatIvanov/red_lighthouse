@@ -5,14 +5,11 @@
         {% csrf_token %}
         <!-- {{ form.breed_id }}<br> -->
         <p><input list="breeds" type="text" name="breed" placeholder="Введите породу"></p>
-
-        {{ form.pedigree_code }}<br>
-        {{ form.pedigree_num }}<br>
+        {{ form.rkf }}<br>
         {{ form.region }}<br>
         {{ form.birth_date }}<br>
         {{ form.is_male }}<br>
-        {{ form.tattoo_code }}<br>
-        {{ form.tattoo_num }}<br>
+        {{ form.tattoo }}<br>
         {{ form.chip }}<br>
         {{ form.name_ru }}<br>
         {{ form.name_en }}<br>
@@ -30,5 +27,4 @@
         {% for el in breed_ru_names %}
             <option value="{{ el }}"></option>
         {% endfor %}
-
 </div>

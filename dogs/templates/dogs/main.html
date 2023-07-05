@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'dogs/css/main.css' %}">
+</head>
+<body>
+    <aside>
+        <h3>Добавить собаку</h3>
+        <div class="features">
+            <!-- <h1>Форма по добавлению собаки</h1> -->
+            <form method="post">
+                {% csrf_token %}
+                <!-- {{ form.breed_id }}<br> -->
+                <p><input list="breeds" type="text" name="breed" placeholder="Порода"></p>
+                <p>{{ form.rkf }}</p><br>
+                {{ form.region }}<br>
+                {{ form.birth_date }}<br>
+                <!-- {{ form.is_male }} Мальчик<br> -->
+                <!-- <input type="checkbox" id="female" name="female"> Девочка<br> -->
+
+                <input type="radio" id="male" name="sex" value="male">
+                <label for="male">Мальчик</label> <br>
+
+                <input type="radio" id="female" name="sex" value="female">
+                <label for="female">Девочка</label> <br>
+
+                {{ form.tattoo }}<br>
+                {{ form.chip }}<br>
+                {{ form.name_ru }}<br>
+                {{ form.name_en }}<br>
+                {{ form.colour_ru }}<br>
+                {{ form.colour_en }}<br>
+                {{ form.breeder_id }}<br>
+                {{ form.owner_id }}<br>
+                {{ form.father_id }}<br>
+                {{ form.mother_id }}<br>
+                <span>{{ error }}</span>
+                <button class="btn btn-success" type="submit">Добавить собаку</button>
+            </form>
+        
+            <datalist id="breeds">
+                {% for el in breed_ru_names %}
+                    <option value="{{ el }}"></option>
+                {% endfor %}
+        </div>
+    </aside>
+
+    <main>
+        <h3 class="main_h3">Записи по собакам</h3>
+        <table>
+            {% if dogs %}
+                <tr>
+                    <th>id</th>
+                    <th>breed_id</th>
+                    <th>rkf</th>
+                    <th>region</th>
+                    <th>birth_date</th>
+                    <th>is_male</th>
+                    <th>tattoo</th>
+                    <th>chip</th>
+                    <th>name_ru</th>
+                    <th>name_en</th>
+                    <th>colour_ru</th>
+                    <th>colour_en</th>
+                    <th>breeder_id</th>
+                    <th>owner_id</th>
+                    <th>father_id</th>
+                    <th>mother_id</th>
+                </tr>
+                {% for el in dogs %}
+                    <tr>
+                        <th>{{ el.id }}</th>
+                        <th>{{ el.breed_id }}</th>
+                        <td>{{ el.rkf }}</td>
+                        <td>{{ el.region }}</td>
+                        <td>{{ el.birth_date }}</td>
+                        <td>{{ el.is_male }}</td>
+                        <td>{{ el.tattoo }}</td>
+                        <td>{{ el.chip }}</td>
+                        <td>{{ el.name_ru }}</td>
+                        <td>{{ el.name_en }}</td>
+                        <td>{{ el.colour_ru }}</td>
+                        <td>{{ el.colour_en }}</td>
+                        <td>{{ el.breeder_id }}</td>
+                        <td>{{ el.owner_id }}</td>
+                        <td>{{ el.father_id }}</td>
+                        <td>{{ el.mother_id }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <p>У вас нет записей!</p>
+            {% endif %}
+        </table>
+    </main>
+</body>

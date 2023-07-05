@@ -11,13 +11,11 @@ def get_empty_breed_id():
 class Dog(models.Model):
 
     breed_id = models.IntegerField('id породы в таблице')
-    pedigree_code = models.TextField('РКФ буквы')
-    pedigree_num = models.TextField('РКФ цифры')
+    rkf = models.TextField('Номер РКФ')
     region = models.TextField('Регион')
     birth_date = models.DateField('Дата рождения')
     is_male = models.BooleanField('Признак пола')
-    tattoo_code = models.TextField('Код клейма')
-    tattoo_num = models.TextField('Клеймо')
+    tattoo = models.TextField('Клеймо')
     chip = models.TextField('Чип')
     name_ru = models.TextField('Кличка на русском')
     name_en = models.TextField('Кличка на английском')
@@ -27,3 +25,8 @@ class Dog(models.Model):
     owner_id = models.IntegerField('Владелец')
     father_id = models.IntegerField('Отец')
     mother_id = models.IntegerField('Мать')
+
+    class Meta:
+        
+        verbose_name = 'Собака'
+        verbose_name_plural = 'Собаки'

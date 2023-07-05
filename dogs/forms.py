@@ -13,13 +13,11 @@ class DogsForm(ModelForm):
         model = Dog
         fields = [
             'breed_id',
-            'pedigree_code',
-            'pedigree_num',
+            'rkf',
             'region',
             'birth_date',
-            'is_male',
-            'tattoo_code',
-            'tattoo_num',
+            # 'is_male',
+            'tattoo',
             'chip',
             'name_ru',
             'name_en',
@@ -33,13 +31,9 @@ class DogsForm(ModelForm):
 
         widgets = {            
             # 'breed_id': ModelChoiceField(queryset=Breed.objects.all()),
-            'pedigree_code': TextInput(attrs={
+            'rkf': TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'код РФК'
-            }),
-            'pedigree_num': TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'цифры РФК'
+                'placeholder': 'Номер РФК'
             }),
             'region': TextInput(attrs={
                 'class': 'form-control',
@@ -54,12 +48,8 @@ class DogsForm(ModelForm):
             #     'placeholder': 'Дата рождения'
             # }),
             # 'is_male': BooleanField(),
-            'is_male': CheckboxInput(),
-            'tattoo_code': TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Код клейма'
-            }),
-            'tattoo_num': TextInput(attrs={
+            # 'is_male': CheckboxInput(),
+            'tattoo': TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Клеймо'
             }),
