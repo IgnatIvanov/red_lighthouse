@@ -1,0 +1,34 @@
+
+<div class="features">
+    <h1>Форма по добавлению собаки</h1>
+    <form method="post">
+        {% csrf_token %}
+        <!-- {{ form.breed_id }}<br> -->
+        <p><input list="breeds" type="text" name="breed" placeholder="Введите породу"></p>
+
+        {{ form.pedigree_code }}<br>
+        {{ form.pedigree_num }}<br>
+        {{ form.region }}<br>
+        {{ form.birth_date }}<br>
+        {{ form.is_male }}<br>
+        {{ form.tattoo_code }}<br>
+        {{ form.tattoo_num }}<br>
+        {{ form.chip }}<br>
+        {{ form.name_ru }}<br>
+        {{ form.name_en }}<br>
+        {{ form.colour_ru }}<br>
+        {{ form.colour_en }}<br>
+        {{ form.breeder_id }}<br>
+        {{ form.owner_id }}<br>
+        {{ form.father_id }}<br>
+        {{ form.mother_id }}<br>
+        <span>{{ error }}</span>
+        <button class="btn btn-success" type="submit">Добавить собаку</button>
+    </form>
+
+    <datalist id="breeds">
+        {% for el in breed_ru_names %}
+            <option value="{{ el }}"></option>
+        {% endfor %}
+
+</div>

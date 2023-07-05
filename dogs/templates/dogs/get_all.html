@@ -1,0 +1,28 @@
+<table>
+    {% if dogs %}
+        <tr>
+            <th>id</th>
+            <th>group</th>
+            <th>bid</th>
+            <th>name_ru</th>
+            <th>name_en</th>
+            <th>country_ru</th>
+            <th>country_en</th>
+            <th>size</th>
+        </tr>
+        {% for el in dogs %}
+            <tr>
+                <th>{{ el.id }}</th>
+                <td>{{ el.group }}</td>
+                <td>{{ el.bid }}</td>
+                <td>{{ el.name_ru }}</td>
+                <td>{{ el.name_en }}</td>
+                <td>{{ el.country_ru }}</td>
+                <td>{{ el.country_en }}</td>
+                <td>{{ el.size }}</td>
+            </tr>
+        {% endfor %}
+    {% else %}
+        <p>У вас нет записей!</p>
+    {% endif %}
+</table>
