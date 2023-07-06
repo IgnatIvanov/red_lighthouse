@@ -1,0 +1,69 @@
+{% load static %}
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'dogs/css/main.css' %}">
+</head>
+<body>
+    <aside>
+        <h3>Добавить участника</h3>
+        <div class="features">
+            <!-- <h1>Форма по добавлению собаки</h1> -->
+            <form method="post">
+                {% csrf_token %}
+                <!-- {{ form.breed_id }}<br> -->
+                
+                <!-- <p>{{ form.name }}</p><br>
+                {{ form.type }}<br>
+                {{ form.date }}<br> -->
+                <p><input list="dogs" type="text" name="dog" placeholder="Собака"></p>
+                <p><input list="events" type="text" name="event" placeholder="Событие"></p>
+
+                <input type="radio" id="no_pay" name="pay" value="no_pay">
+                <label for="no_pay">Ожидание оплаты</label> <br>
+
+                <input type="radio" id="yes_pay" name="pay" value="yes_pay">
+                <label for="yes_pay">Оплачен</label> <br>
+
+                <span>{{ error }}</span>
+                <button class="btn btn-success" type="submit">Добавить событие</button>
+            </form>
+        
+            <datalist id="dogs">
+                {% for el in dog_tattoos %}
+                    <option value="{{ el }}"></option>
+                {% endfor %}
+            </datalist>
+
+            <datalist id="events">
+                {% for el in events_names %}
+                    <option value="{{ el }}"></option>
+                {% endfor %}
+            </datalist>
+        </div>
+    </aside>
+
+    <main>
+        <h3 class="main_h3">Зарегистрированные собаки</h3>
+        <table>
+            {% if participants %}
+                <tr>
+                    <th>id</th>
+                    <th>dog_tattoo</th>
+                    <th>event</th>
+                    <th>status</th>
+                </tr>
+                {% for el in participants %}
+                    <tr>
+                        <th>{{ el.id }}</th>
+                        <th>{{ el.dog_tattoo }}</th>
+                        <td>{{ el.event }}</td>
+                        <td>{{ el.status }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <p>У вас нет записей!</p>
+            {% endif %}
+        </table>
+    </main>
+</body>

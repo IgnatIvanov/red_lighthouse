@@ -17,11 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from breed import views as breed_views
-from dogs import views as dogs_views
+
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', breed_views.breed_home, name='breed_home'),
     path('dogs/', include('dogs.urls')),
-    path('events/', include('event.urls'))
+    path('events/', include('event.urls')),
+    path('participant/', include('participant.urls'))
 ]

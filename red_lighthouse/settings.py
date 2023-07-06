@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'breed',
     'dogs',
     'classes',
-    'event'
+    'event',
+    'participant',
 ]
 
 MIDDLEWARE = [

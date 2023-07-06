@@ -61,7 +61,7 @@ def dogs_main(request):
         # breed = Breed.objects.filter(name_ru=breed_name_ru).first()
         # breed_id = breed.id
         # print('breed_id', breed_id)
-        sex = request.POST.get("sex")
+        # sex = request.POST.get("sex")
         # print('sex', sex)
 
         dog = Dog()
