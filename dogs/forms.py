@@ -1,5 +1,4 @@
 from .models import Dog
-from .models import Breed
 from django.forms import ModelForm, TextInput
 from django.forms import DateTimeInput, Textarea
 from django.forms import ModelChoiceField, BooleanField
@@ -12,11 +11,9 @@ class DogsForm(ModelForm):
 
         model = Dog
         fields = [
-            'breed_id',
             'rkf',
             'region',
             'birth_date',
-            # 'is_male',
             'tattoo',
             'chip',
             'name_ru',
@@ -30,7 +27,6 @@ class DogsForm(ModelForm):
         ]
 
         widgets = {            
-            # 'breed_id': ModelChoiceField(queryset=Breed.objects.all()),
             'rkf': TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Номер РФК'
@@ -43,12 +39,6 @@ class DogsForm(ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Дата рождения'
             }),
-            # 'is_male': BooleanField(attrs={
-            #     'class': 'form-control',
-            #     'placeholder': 'Дата рождения'
-            # }),
-            # 'is_male': BooleanField(),
-            # 'is_male': CheckboxInput(),
             'tattoo': TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Клеймо'

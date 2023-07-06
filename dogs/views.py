@@ -6,44 +6,44 @@ from .models import Breed
 
 
 # Не будет использоваться в будущем
-def dogs_home(request):
-    dogs = Dog.objects.order_by('id')
-    return render(request, 'dogs/get_all.html', {'dogs': dogs})
+# def dogs_home(request):
+#     dogs = Dog.objects.order_by('id')
+#     return render(request, 'dogs/get_all.html', {'dogs': dogs})
 
 
 # Не будет использоваться в будущем
-def create(request):
-    error = ''
-    if request.method == 'POST':
-        form = DogsForm(request.POST)
-        # if form.is_valid():
-        #     form.save()
-        #     return redirect('dogs_home')
-        # else:
-        #     error = 'Форма заполнена неверно'
-        # Так можно брать значения породы для подстановки
-        breed_name_ru = request.POST.get("breed")
-        breed = Breed.objects.filter(name_ru=breed_name_ru).first()
-        breed_id = breed.id
-        print('breed_id', breed_id)
+# def create(request):
+#     error = ''
+#     if request.method == 'POST':
+#         form = DogsForm(request.POST)
+#         # if form.is_valid():
+#         #     form.save()
+#         #     return redirect('dogs_home')
+#         # else:
+#         #     error = 'Форма заполнена неверно'
+#         # Так можно брать значения породы для подстановки
+#         breed_name_ru = request.POST.get("breed")
+#         breed = Breed.objects.filter(name_ru=breed_name_ru).first()
+#         breed_id = breed.id
+#         print('breed_id', breed_id)
 
-    form = DogsForm()
-    breeds = Breed.objects.all()
-    breed_ru_names = []
-    # print(breed_ru_names.get('name_ru'))
-    for el in breeds:
-        # print(el.name_ru)
-        breed_ru_names.append(el.name_ru)
+#     form = DogsForm()
+#     breeds = Breed.objects.all()
+#     breed_ru_names = []
+#     # print(breed_ru_names.get('name_ru'))
+#     for el in breeds:
+#         # print(el.name_ru)
+#         breed_ru_names.append(el.name_ru)
 
-    del breeds
+#     del breeds
 
-    data = {
-        'form': form,
-        'error': error,
-        'breed_ru_names': breed_ru_names
-    }
+#     data = {
+#         'form': form,
+#         'error': error,
+#         'breed_ru_names': breed_ru_names
+#     }
 
-    return render(request, 'dogs/create.html', data)
+#     return render(request, 'dogs/create.html', data)
 
 
 def dogs_main(request):
@@ -62,7 +62,7 @@ def dogs_main(request):
         # breed_id = breed.id
         # print('breed_id', breed_id)
         sex = request.POST.get("sex")
-        print('sex', sex)
+        # print('sex', sex)
 
         dog = Dog()
 
@@ -91,6 +91,7 @@ def dogs_main(request):
         dog.father_id = request.POST.get("father_id")
         dog.mother_id = request.POST.get("mother_id")
         dog.save()
+        
 
     form = DogsForm()
     breeds = Breed.objects.all()

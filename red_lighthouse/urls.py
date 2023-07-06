@@ -22,6 +22,6 @@ from dogs import views as dogs_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', breed_views.breed_home, name='breed_home'),
-    # path('dogs', dogs_views.dogs_home, name='dogs_home'),
-    path('dogs/', include('dogs.urls'))
+    path('dogs/', include('dogs.urls')),
+    path('events/', include('event.urls'))
 ]

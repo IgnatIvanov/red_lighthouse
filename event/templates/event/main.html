@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'dogs/css/main.css' %}">
+</head>
+<body>
+    <aside>
+        <h3>Добавить событие</h3>
+        <div class="features">
+            <!-- <h1>Форма по добавлению собаки</h1> -->
+            <form method="post">
+                {% csrf_token %}
+                <!-- {{ form.breed_id }}<br> -->
+                
+                <p>{{ form.name }}</p><br>
+                {{ form.type }}<br>
+                {{ form.date }}<br>
+                <p><input list="classes" type="text" name="class" placeholder="Класс"></p>
+                <span>{{ error }}</span>
+                <button class="btn btn-success" type="submit">Добавить событие</button>
+            </form>
+        
+            <datalist id="classes">
+                {% for el in classes_names %}
+                    <option value="{{ el }}"></option>
+                {% endfor %}
+        </div>
+    </aside>
+
+    <main>
+        <h3 class="main_h3">Все события</h3>
+        <table>
+            {% if events %}
+                <tr>
+                    <th>id</th>
+                    <th>org_id</th>
+                    <th>name</th>
+                    <th>type</th>
+                    <th>date</th>
+                    <th>class_id</th>
+                </tr>
+                {% for el in events %}
+                    <tr>
+                        <th>{{ el.id }}</th>
+                        <th>{{ el.org_id }}</th>
+                        <td>{{ el.name }}</td>
+                        <td>{{ el.type }}</td>
+                        <td>{{ el.date }}</td>
+                        <td>{{ el.class_id }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <p>У вас нет записей!</p>
+            {% endif %}
+        </table>
+    </main>
+</body>

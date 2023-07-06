@@ -1,7 +1,8 @@
 from django.db import models
 
-# Create your models here.
-class Class(models.Model):
+
+
+class DogClass(models.Model):
 
     name_ru = models.TextField('Название русское')
     name_en = models.TextField('Название английское')

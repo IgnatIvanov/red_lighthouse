@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'breed',
     'dogs',
-    'class',
+    'classes',
+    'event'
 ]
 
 MIDDLEWARE = [

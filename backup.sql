@@ -26,6 +26,9 @@ INSERT INTO django_migrations VALUES(22,'dogs','0002_alter_dog_breed_id_alter_do
 INSERT INTO django_migrations VALUES(23,'dogs','0003_alter_dog_options_remove_dog_pedigree_code_and_more','2023-07-05 13:21:11.669406');
 INSERT INTO django_migrations VALUES(24,'dogs','0004_rename_tattoo_num_dog_tattoo_remove_dog_tattoo_code','2023-07-05 13:34:05.824792');
 INSERT INTO django_migrations VALUES(25,'class','0001_initial','2023-07-06 17:09:20.247028');
+INSERT INTO django_migrations VALUES(26,'event','0001_initial','2023-07-06 19:05:54.066663');
+INSERT INTO django_migrations VALUES(27,'event','0002_alter_event_class_id','2023-07-06 19:05:54.078664');
+INSERT INTO django_migrations VALUES(28,'classes','0001_initial','2023-07-06 20:39:17.117388');
 CREATE TABLE IF NOT EXISTS "auth_group_permissions" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "group_id" integer NOT NULL REFERENCES "auth_group" ("id") DEFERRABLE INITIALLY DEFERRED, "permission_id" integer NOT NULL REFERENCES "auth_permission" ("id") DEFERRABLE INITIALLY DEFERRED);
 CREATE TABLE IF NOT EXISTS "auth_user_groups" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "user_id" integer NOT NULL REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED, "group_id" integer NOT NULL REFERENCES "auth_group" ("id") DEFERRABLE INITIALLY DEFERRED);
 CREATE TABLE IF NOT EXISTS "auth_user_user_permissions" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "user_id" integer NOT NULL REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED, "permission_id" integer NOT NULL REFERENCES "auth_permission" ("id") DEFERRABLE INITIALLY DEFERRED);
@@ -43,6 +46,8 @@ INSERT INTO django_content_type VALUES(6,'sessions','session');
 INSERT INTO django_content_type VALUES(7,'breed','breed');
 INSERT INTO django_content_type VALUES(8,'dogs','dog');
 INSERT INTO django_content_type VALUES(9,'class','class');
+INSERT INTO django_content_type VALUES(10,'event','event');
+INSERT INTO django_content_type VALUES(11,'classes','dogclass');
 CREATE TABLE IF NOT EXISTS "auth_permission" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "content_type_id" integer NOT NULL REFERENCES "django_content_type" ("id") DEFERRABLE INITIALLY DEFERRED, "codename" varchar(100) NOT NULL, "name" varchar(255) NOT NULL);
 INSERT INTO auth_permission VALUES(1,1,'add_logentry','Can add log entry');
 INSERT INTO auth_permission VALUES(2,1,'change_logentry','Can change log entry');
@@ -80,12 +85,21 @@ INSERT INTO auth_permission VALUES(33,9,'add_class','Can add Класс');
 INSERT INTO auth_permission VALUES(34,9,'change_class','Can change Класс');
 INSERT INTO auth_permission VALUES(35,9,'delete_class','Can delete Класс');
 INSERT INTO auth_permission VALUES(36,9,'view_class','Can view Класс');
+INSERT INTO auth_permission VALUES(37,10,'add_event','Can add Событие');
+INSERT INTO auth_permission VALUES(38,10,'change_event','Can change Событие');
+INSERT INTO auth_permission VALUES(39,10,'delete_event','Can delete Событие');
+INSERT INTO auth_permission VALUES(40,10,'view_event','Can view Событие');
+INSERT INTO auth_permission VALUES(41,11,'add_dogclass','Can add Класс');
+INSERT INTO auth_permission VALUES(42,11,'change_dogclass','Can change Класс');
+INSERT INTO auth_permission VALUES(43,11,'delete_dogclass','Can delete Класс');
+INSERT INTO auth_permission VALUES(44,11,'view_dogclass','Can view Класс');
 CREATE TABLE IF NOT EXISTS "auth_group" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(150) NOT NULL UNIQUE);
 CREATE TABLE IF NOT EXISTS "auth_user" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "password" varchar(128) NOT NULL, "last_login" datetime NULL, "is_superuser" bool NOT NULL, "username" varchar(150) NOT NULL UNIQUE, "last_name" varchar(150) NOT NULL, "email" varchar(254) NOT NULL, "is_staff" bool NOT NULL, "is_active" bool NOT NULL, "date_joined" datetime NOT NULL, "first_name" varchar(150) NOT NULL);
-INSERT INTO auth_user VALUES(1,'pbkdf2_sha256$600000$BMiE5PenNdKw6B6djl4tBh$BSA+5KzsRKhqvuEvj05cBLkOcfVRJgu0+TBs7i3aI9E=','2023-07-05 19:20:26.457393',1,'admin','','',1,1,'2023-07-03 21:26:02.999042','');
+INSERT INTO auth_user VALUES(1,'pbkdf2_sha256$600000$BMiE5PenNdKw6B6djl4tBh$BSA+5KzsRKhqvuEvj05cBLkOcfVRJgu0+TBs7i3aI9E=','2023-07-06 19:03:54.750813',1,'admin','','',1,1,'2023-07-03 21:26:02.999042','');
 CREATE TABLE IF NOT EXISTS "django_session" ("session_key" varchar(40) NOT NULL PRIMARY KEY, "session_data" text NOT NULL, "expire_date" datetime NOT NULL);
 INSERT INTO django_session VALUES('w0z4sp0jaq6h9y72gu13w2368vjh036u','.eJxVjDkOwjAUBe_iGlnmxxuU9Jwh-ptxACVSnFSIu0OkFNC-mXkv0-O61H5tOveDmLM5msPvRsgPHTcgdxxvk-VpXOaB7KbYnTZ7nUSfl939O6jY6reOUEikgEBA9gKKwblIwqohF3aJoiTymD2WmDBT4U47OAHnlMSDeX8AILw5IA:1qGR5P:6Bs1Tu4zpeoWmA5KzQjvekusPx0-4Bz9dnMEH4yHoNw','2023-07-17 21:27:55.950746');
 INSERT INTO django_session VALUES('8xrbh50b001rr9nyc7ajfiskrybnk39p','.eJxVjDkOwjAUBe_iGlnmxxuU9Jwh-ptxACVSnFSIu0OkFNC-mXkv0-O61H5tOveDmLM5msPvRsgPHTcgdxxvk-VpXOaB7KbYnTZ7nUSfl939O6jY6reOUEikgEBA9gKKwblIwqohF3aJoiTymD2WmDBT4U47OAHnlMSDeX8AILw5IA:1qH838:_RnxLrWKa6GywPrc1a9rqizQiwR-f6dBB2HfzPcc4SM','2023-07-19 19:20:26.463393');
+INSERT INTO django_session VALUES('nsb40sbsj82y3496pvxerthhnx05jamx','.eJxVjDkOwjAUBe_iGlnmxxuU9Jwh-ptxACVSnFSIu0OkFNC-mXkv0-O61H5tOveDmLM5msPvRsgPHTcgdxxvk-VpXOaB7KbYnTZ7nUSfl939O6jY6reOUEikgEBA9gKKwblIwqohF3aJoiTymD2WmDBT4U47OAHnlMSDeX8AILw5IA:1qHUGg:iQi5Z-TUFmJyxY35lXoVVzjk1cCWwN2Mhv25a-YhC9I','2023-07-20 19:03:54.756813');
 CREATE TABLE IF NOT EXISTS "breed_breed" (
     "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, 
     "group" integer NOT NULL,
@@ -632,25 +646,40 @@ INSERT INTO dogs_dog VALUES(120,'-','2022-06-24',0,'-','ГОЛД НЕРИС ЗИ
 INSERT INTO dogs_dog VALUES(121,'-','2021-05-14',1,'-','ЧЕРНЫЙ СТРАЖНИК РИСК ФАКТОР','-','чёрный','-',0,0,0,0,110,'6284153','BAP 245');
 INSERT INTO dogs_dog VALUES(122,'-','2016-09-25',0,'-','-','Cherni Strazhnik Letkajenkka','чёрный','black',0,0,0,0,110,'4755339','BAP 218');
 INSERT INTO dogs_dog VALUES(123,'-','2021-08-09',0,'-','ДЖЕНТЛИ БОРН ТАНГО ИН ЗЕ НАЙТ','-','черно-подпалый','-',0,0,0,0,394,'6324089','JTB 342');
-CREATE TABLE IF NOT EXISTS "class_class" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name_ru" text NOT NULL, "name_en" text NOT NULL);
-INSERT INTO class_class VALUES(1,'беби','baby');
-INSERT INTO class_class VALUES(2,'щенков','puppy');
-INSERT INTO class_class VALUES(3,'юниоров','junior');
-INSERT INTO class_class VALUES(4,'промежуточный','intermediate');
-INSERT INTO class_class VALUES(5,'открытый','open');
-INSERT INTO class_class VALUES(6,'рабочий','working');
-INSERT INTO class_class VALUES(7,'победителей','winner');
-INSERT INTO class_class VALUES(8,'чемпионов','champion');
-INSERT INTO class_class VALUES(9,'чемпионов НКП','club champion');
-INSERT INTO class_class VALUES(10,'ветеранов','veteran');
+CREATE TABLE IF NOT EXISTS "event_event" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "org_id" integer NOT NULL, "name" text NOT NULL, "type" text NOT NULL, "date" date NOT NULL, "class_id" integer NOT NULL);
+INSERT INTO event_event VALUES(1,0,'1 САС ЧРКФ','-','2023-01-01',4);
+INSERT INTO event_event VALUES(2,0,'2 САС 2 ГРУППЫ','-','2023-01-01',3);
+INSERT INTO event_event VALUES(3,0,'3 САС 3 ГРУППЫ','-','2023-01-01',4);
+INSERT INTO event_event VALUES(4,0,'4 МОНОПОРОДНЫЕ ВЫСТАВКА ШНАУЦЕР','-','2023-01-01',4);
+INSERT INTO event_event VALUES(5,0,'5 МОНОПОРОДНЫЕ ВЫСТАВКА НЕМЕЦКИЙ ДОГ','-','2023-01-01',4);
+INSERT INTO event_event VALUES(6,0,'6 МОНОПОРОДНЫЕ ВЫСТАВКА ЦВЕРГШНАУЦЕР','-','2023-01-01',4);
+INSERT INTO event_event VALUES(7,0,'7 ТЕСТИРОВАНИЕ','-','2023-01-01',4);
+CREATE TABLE IF NOT EXISTS "classes_dogclass" (
+	"id"	integer NOT NULL,
+	"name_ru"	text NOT NULL,
+	"name_en"	text NOT NULL,
+	PRIMARY KEY("id" AUTOINCREMENT)
+);
+INSERT INTO classes_dogclass VALUES(1,'беби','baby');
+INSERT INTO classes_dogclass VALUES(2,'щенков','puppy');
+INSERT INTO classes_dogclass VALUES(3,'юниоров','junior');
+INSERT INTO classes_dogclass VALUES(4,'промежуточный','intermediate');
+INSERT INTO classes_dogclass VALUES(5,'открытый','open');
+INSERT INTO classes_dogclass VALUES(6,'рабочий','working');
+INSERT INTO classes_dogclass VALUES(7,'победителей','winner');
+INSERT INTO classes_dogclass VALUES(8,'чемпионов','champion');
+INSERT INTO classes_dogclass VALUES(9,'чемпионов НКП','club champion');
+INSERT INTO classes_dogclass VALUES(10,'ветеранов','veteran');
 DELETE FROM sqlite_sequence;
-INSERT INTO sqlite_sequence VALUES('django_migrations',25);
+INSERT INTO sqlite_sequence VALUES('django_migrations',28);
 INSERT INTO sqlite_sequence VALUES('django_admin_log',3);
-INSERT INTO sqlite_sequence VALUES('django_content_type',9);
-INSERT INTO sqlite_sequence VALUES('auth_permission',36);
+INSERT INTO sqlite_sequence VALUES('django_content_type',11);
+INSERT INTO sqlite_sequence VALUES('auth_permission',44);
 INSERT INTO sqlite_sequence VALUES('auth_group',0);
 INSERT INTO sqlite_sequence VALUES('auth_user',1);
 INSERT INTO sqlite_sequence VALUES('dogs_dog',123);
+INSERT INTO sqlite_sequence VALUES('classes_dogclass',10);
+INSERT INTO sqlite_sequence VALUES('event_event',7);
 CREATE UNIQUE INDEX "auth_group_permissions_group_id_permission_id_0cd325b0_uniq" ON "auth_group_permissions" ("group_id", "permission_id");
 CREATE INDEX "auth_group_permissions_group_id_b120cbf9" ON "auth_group_permissions" ("group_id");
 CREATE INDEX "auth_group_permissions_permission_id_84c5c92e" ON "auth_group_permissions" ("permission_id");
