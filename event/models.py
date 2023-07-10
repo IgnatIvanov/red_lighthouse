@@ -7,7 +7,6 @@ class Event(models.Model):
     name = models.TextField('Название события')
     type = models.TextField('Тип')
     date = models.DateField('Дата проведения')
-    class_id = models.IntegerField('id Класса')
 
     class Meta:
         

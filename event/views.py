@@ -13,9 +13,9 @@ def events_main(request):
 
         event = Event()
 
-        class_name_ru = request.POST.get("class")
-        dog_class = DogClass.objects.filter(name_ru=class_name_ru).first()
-        event.class_id = dog_class.id
+        # class_name_ru = request.POST.get("class")
+        # dog_class = DogClass.objects.filter(name_ru=class_name_ru).first()
+        # event.class_id = dog_class.id
 
         event.org_id = 0
         event.name = request.POST.get("name")
@@ -26,17 +26,17 @@ def events_main(request):
 
     form  = EventsForm()
     
-    classes = DogClass.objects.all()
-    classes_names = []
-    for el in classes:
-        classes_names.append(el.name_ru)
+    # classes = DogClass.objects.all()
+    # classes_names = []
+    # for el in classes:
+    #     classes_names.append(el.name_ru)
 
     events = Event.objects.order_by('id')
 
     data = {
         'form': form,
         'events': events,
-        'classes_names': classes_names
+        # 'classes_names': classes_names
     }
 
     return render(request, 'event/main.html', data)

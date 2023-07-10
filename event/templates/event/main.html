@@ -11,20 +11,19 @@
             <!-- <h1>Форма по добавлению собаки</h1> -->
             <form method="post">
                 {% csrf_token %}
-                <!-- {{ form.breed_id }}<br> -->
-                
+                                
                 <p>{{ form.name }}</p><br>
                 {{ form.type }}<br>
                 {{ form.date }}<br>
-                <p><input list="classes" type="text" name="class" placeholder="Класс"></p>
+                <!-- <p><input list="classes" type="text" name="class" placeholder="Класс"></p> -->
                 <span>{{ error }}</span>
                 <button class="btn btn-success" type="submit">Добавить событие</button>
             </form>
         
-            <datalist id="classes">
+            <!-- <datalist id="classes">
                 {% for el in classes_names %}
                     <option value="{{ el }}"></option>
-                {% endfor %}
+                {% endfor %} -->
         </div>
     </aside>
 
@@ -38,7 +37,6 @@
                     <th>name</th>
                     <th>type</th>
                     <th>date</th>
-                    <th>class_id</th>
                 </tr>
                 {% for el in events %}
                     <tr>
@@ -47,7 +45,6 @@
                         <td>{{ el.name }}</td>
                         <td>{{ el.type }}</td>
                         <td>{{ el.date }}</td>
-                        <td>{{ el.class_id }}</td>
                     </tr>
                 {% endfor %}
             {% else %}

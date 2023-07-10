@@ -33,6 +33,7 @@ INSERT INTO django_migrations VALUES(29,'participant','0001_initial','2023-07-06
 INSERT INTO django_migrations VALUES(30,'event','0003_type_alter_event_type','2023-07-10 18:50:03.550880');
 INSERT INTO django_migrations VALUES(31,'event','0004_rank','2023-07-10 20:23:32.070561');
 INSERT INTO django_migrations VALUES(32,'participant','0002_participant_class_id','2023-07-10 20:58:03.793166');
+INSERT INTO django_migrations VALUES(33,'event','0005_remove_event_class_id','2023-07-10 21:13:24.138175');
 CREATE TABLE IF NOT EXISTS "auth_group_permissions" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "group_id" integer NOT NULL REFERENCES "auth_group" ("id") DEFERRABLE INITIALLY DEFERRED, "permission_id" integer NOT NULL REFERENCES "auth_permission" ("id") DEFERRABLE INITIALLY DEFERRED);
 CREATE TABLE IF NOT EXISTS "auth_user_groups" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "user_id" integer NOT NULL REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED, "group_id" integer NOT NULL REFERENCES "auth_group" ("id") DEFERRABLE INITIALLY DEFERRED);
 CREATE TABLE IF NOT EXISTS "auth_user_user_permissions" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "user_id" integer NOT NULL REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED, "permission_id" integer NOT NULL REFERENCES "auth_permission" ("id") DEFERRABLE INITIALLY DEFERRED);
@@ -666,14 +667,6 @@ INSERT INTO dogs_dog VALUES(120,'-','2022-06-24',0,'-','ГОЛД НЕРИС ЗИ
 INSERT INTO dogs_dog VALUES(121,'-','2021-05-14',1,'-','ЧЕРНЫЙ СТРАЖНИК РИСК ФАКТОР','-','чёрный','-',0,0,0,0,110,'6284153','BAP 245');
 INSERT INTO dogs_dog VALUES(122,'-','2016-09-25',0,'-','-','Cherni Strazhnik Letkajenkka','чёрный','black',0,0,0,0,110,'4755339','BAP 218');
 INSERT INTO dogs_dog VALUES(123,'-','2021-08-09',0,'-','ДЖЕНТЛИ БОРН ТАНГО ИН ЗЕ НАЙТ','-','черно-подпалый','-',0,0,0,0,394,'6324089','JTB 342');
-CREATE TABLE IF NOT EXISTS "event_event" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "org_id" integer NOT NULL, "name" text NOT NULL, "type" text NOT NULL, "date" date NOT NULL, "class_id" integer NOT NULL);
-INSERT INTO event_event VALUES(1,0,'1 САС ЧРКФ','-','2023-01-01',4);
-INSERT INTO event_event VALUES(2,0,'2 САС 2 ГРУППЫ','-','2023-01-01',3);
-INSERT INTO event_event VALUES(3,0,'3 САС 3 ГРУППЫ','-','2023-01-01',4);
-INSERT INTO event_event VALUES(4,0,'4 МОНОПОРОДНЫЕ ВЫСТАВКА ШНАУЦЕР','-','2023-01-01',4);
-INSERT INTO event_event VALUES(5,0,'5 МОНОПОРОДНЫЕ ВЫСТАВКА НЕМЕЦКИЙ ДОГ','-','2023-01-01',4);
-INSERT INTO event_event VALUES(6,0,'6 МОНОПОРОДНЫЕ ВЫСТАВКА ЦВЕРГШНАУЦЕР','-','2023-01-01',4);
-INSERT INTO event_event VALUES(7,0,'7 ТЕСТИРОВАНИЕ','-','2023-01-01',4);
 CREATE TABLE IF NOT EXISTS "classes_dogclass" (
 	"id"	integer NOT NULL,
 	"name_ru"	text NOT NULL,
@@ -870,8 +863,16 @@ INSERT INTO participant_participant VALUES(150,66,7,1,1);
 INSERT INTO participant_participant VALUES(151,19,7,1,1);
 INSERT INTO participant_participant VALUES(152,45,7,1,1);
 INSERT INTO participant_participant VALUES(153,46,7,1,1);
+CREATE TABLE IF NOT EXISTS "event_event" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "org_id" integer NOT NULL, "name" text NOT NULL, "type" text NOT NULL, "date" date NOT NULL);
+INSERT INTO event_event VALUES(1,0,'1 САС ЧРКФ','-','2023-01-01');
+INSERT INTO event_event VALUES(2,0,'2 САС 2 ГРУППЫ','-','2023-01-01');
+INSERT INTO event_event VALUES(3,0,'3 САС 3 ГРУППЫ','-','2023-01-01');
+INSERT INTO event_event VALUES(4,0,'4 МОНОПОРОДНЫЕ ВЫСТАВКА ШНАУЦЕР','-','2023-01-01');
+INSERT INTO event_event VALUES(5,0,'5 МОНОПОРОДНЫЕ ВЫСТАВКА НЕМЕЦКИЙ ДОГ','-','2023-01-01');
+INSERT INTO event_event VALUES(6,0,'6 МОНОПОРОДНЫЕ ВЫСТАВКА ЦВЕРГШНАУЦЕР','-','2023-01-01');
+INSERT INTO event_event VALUES(7,0,'7 ТЕСТИРОВАНИЕ','-','2023-01-01');
 DELETE FROM sqlite_sequence;
-INSERT INTO sqlite_sequence VALUES('django_migrations',32);
+INSERT INTO sqlite_sequence VALUES('django_migrations',33);
 INSERT INTO sqlite_sequence VALUES('django_admin_log',4);
 INSERT INTO sqlite_sequence VALUES('django_content_type',14);
 INSERT INTO sqlite_sequence VALUES('auth_permission',56);
@@ -879,8 +880,8 @@ INSERT INTO sqlite_sequence VALUES('auth_group',0);
 INSERT INTO sqlite_sequence VALUES('auth_user',1);
 INSERT INTO sqlite_sequence VALUES('dogs_dog',123);
 INSERT INTO sqlite_sequence VALUES('classes_dogclass',10);
-INSERT INTO sqlite_sequence VALUES('event_event',7);
 INSERT INTO sqlite_sequence VALUES('participant_participant',153);
+INSERT INTO sqlite_sequence VALUES('event_event',7);
 CREATE UNIQUE INDEX "auth_group_permissions_group_id_permission_id_0cd325b0_uniq" ON "auth_group_permissions" ("group_id", "permission_id");
 CREATE INDEX "auth_group_permissions_group_id_b120cbf9" ON "auth_group_permissions" ("group_id");
 CREATE INDEX "auth_group_permissions_permission_id_84c5c92e" ON "auth_group_permissions" ("permission_id");
