@@ -12,7 +12,9 @@
             <form method="post">
                 {% csrf_token %}
                 
-                {{ form.type }}<br>
+                <!-- {{ form.type }}<br> -->
+                <p><input list="types" type="text" name="type" placeholder="Тип события"></p>
+                <p><input list="ranks" type="text" name="rank" placeholder="Ранг события"></p>
                 {{ form.date }}<br>
                 {{ form.comment }}<br>
                 <!-- <p><input list="classes" type="text" name="class" placeholder="Класс"></p> -->
@@ -20,10 +22,17 @@
                 <button class="btn btn-success" type="submit">Добавить событие</button>
             </form>
         
-            <!-- <datalist id="classes">
-                {% for el in classes_names %}
+            <datalist id="types">
+                {% for el in types_names %}
                     <option value="{{ el }}"></option>
-                {% endfor %} -->
+                {% endfor %}
+            </datalist>
+            
+            <datalist id="ranks">
+                {% for el in ranks_names %}
+                    <option value="{{ el }}"></option>
+                {% endfor %}
+            </datalist>
         </div>
     </aside>
 
@@ -34,7 +43,8 @@
                 <tr>
                     <th>id</th>
                     <th>org_id</th>
-                    <th>type</th>
+                    <th>type_id</th>
+                    <th>rank_id</th>
                     <th>date</th>
                     <th>comment</th>
                 </tr>
@@ -42,7 +52,8 @@
                     <tr>
                         <th>{{ el.id }}</th>
                         <th>{{ el.org_id }}</th>
-                        <td>{{ el.type }}</td>
+                        <td>{{ el.type_id }}</td>
+                        <td>{{ el.rank_id }}</td>
                         <td>{{ el.date }}</td>                        
                         <td>{{ el.comment }}</td>
                     </tr>

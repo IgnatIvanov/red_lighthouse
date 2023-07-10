@@ -4,7 +4,8 @@ from django.db import models
 class Event(models.Model):
 
     org_id = models.IntegerField('id Организатора')
-    type = models.TextField('Тип')
+    type_id = models.IntegerField('id типа')
+    rank_id = models.IntegerField('id ранга')
     date = models.DateField('Дата проведения')
     comment = models.TextField('Название события')
 
