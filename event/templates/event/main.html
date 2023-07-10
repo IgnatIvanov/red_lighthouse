@@ -11,10 +11,10 @@
             <!-- <h1>Форма по добавлению собаки</h1> -->
             <form method="post">
                 {% csrf_token %}
-                                
-                <p>{{ form.name }}</p><br>
+                
                 {{ form.type }}<br>
                 {{ form.date }}<br>
+                {{ form.comment }}<br>
                 <!-- <p><input list="classes" type="text" name="class" placeholder="Класс"></p> -->
                 <span>{{ error }}</span>
                 <button class="btn btn-success" type="submit">Добавить событие</button>
@@ -34,17 +34,17 @@
                 <tr>
                     <th>id</th>
                     <th>org_id</th>
-                    <th>name</th>
                     <th>type</th>
                     <th>date</th>
+                    <th>comment</th>
                 </tr>
                 {% for el in events %}
                     <tr>
                         <th>{{ el.id }}</th>
                         <th>{{ el.org_id }}</th>
-                        <td>{{ el.name }}</td>
                         <td>{{ el.type }}</td>
-                        <td>{{ el.date }}</td>
+                        <td>{{ el.date }}</td>                        
+                        <td>{{ el.comment }}</td>
                     </tr>
                 {% endfor %}
             {% else %}

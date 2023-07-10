@@ -18,9 +18,9 @@ def events_main(request):
         # event.class_id = dog_class.id
 
         event.org_id = 0
-        event.name = request.POST.get("name")
         event.type = request.POST.get("type")
         event.date = request.POST.get("date")
+        event.comment = request.POST.get("comment")
         event.save()
 
 

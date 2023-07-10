@@ -4,9 +4,9 @@ from django.db import models
 class Event(models.Model):
 
     org_id = models.IntegerField('id Организатора')
-    name = models.TextField('Название события')
     type = models.TextField('Тип')
     date = models.DateField('Дата проведения')
+    comment = models.TextField('Название события')
 
     class Meta:
         

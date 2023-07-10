@@ -11,16 +11,12 @@ class EventsForm(ModelForm):
 
         model = Event
         fields = [
-            'name',
             'type',
-            'date'
+            'date',
+            'comment'
         ]
 
         widgets = {
-            'name': TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Название события'
-            }),
             'type': TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Тип события'
@@ -29,4 +25,8 @@ class EventsForm(ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Дата проведения'
             }),
+            'comment': TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Дополнительная информация'
+            })
         }
