@@ -18,6 +18,7 @@
                 {{ form.date }}<br> -->
                 <p><input list="dogs" type="text" name="dog" placeholder="Собака"></p>
                 <p><input list="events" type="text" name="event" placeholder="Событие"></p>
+                <p><input list="classes" type="text" name="class" placeholder="Класс"></p>
 
                 <input type="radio" id="no_pay" name="pay" value="no_pay">
                 <label for="no_pay">Ожидание оплаты</label> <br>
@@ -37,7 +38,13 @@
 
             <datalist id="events">
                 {% for el in events_names %}
-                    <option value="{{ el }}"></option>
+                    <option value="{{ el.name }}"></option>
+                {% endfor %}
+            </datalist>
+
+            <datalist id="classes">
+                {% for el in classes_names %}
+                    <option value="{{ el.name }}"></option>
                 {% endfor %}
             </datalist>
         </div>
@@ -49,14 +56,16 @@
             {% if participants %}
                 <tr>
                     <th>id</th>
-                    <th>dog_tattoo</th>
-                    <th>event</th>
-                    <th>status</th>
+                    <th>Клеймо собаки</th>
+                    <th>Класс собаки</th>
+                    <th>Событие</th>
+                    <th>Статус оплаты</th>
                 </tr>
                 {% for el in participants %}
                     <tr>
                         <th>{{ el.id }}</th>
-                        <th>{{ el.dog_tattoo }}</th>
+                        <td>{{ el.dog_tattoo }}</td>
+                        <td>{{ el.class }}</td>
                         <td>{{ el.event }}</td>
                         <td>{{ el.status }}</td>
                     </tr>
