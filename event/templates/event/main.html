@@ -42,17 +42,17 @@
             {% if events %}
                 <tr>
                     <th>id</th>
-                    <th>org_id</th>
-                    <th>type_id</th>
-                    <th>rank_id</th>
-                    <th>date</th>
-                    <th>comment</th>
+                    <th>Организатор</th>
+                    <th>Тип</th>
+                    <th>Ранг</th>
+                    <th>Дата проведения</th>
+                    <th>Дополнительная информация</th>
                 </tr>
                 {% for el in events %}
                     <tr>
                         <th>{{ el.id }}</th>
-                        <th>{{ el.org_id }}</th>
-                        <td>{{ el.type_id }}</td>
+                        <th>{{ el.org }}</th>
+                        <td>{{ el.type }}</td>
                         <td>{{ el.rank_id }}</td>
                         <td>{{ el.date }}</td>                        
                         <td>{{ el.comment }}</td>

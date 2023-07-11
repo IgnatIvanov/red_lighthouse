@@ -54,9 +54,31 @@ def events_main(request):
     for el in ranks:
         ranks_names.append(el.name)
 
+
+    # id = []
+    # org_id = []
+    # type_id = []
+    # rank_id = []
+    # date = []
+    # comment = []
+
+    events_dicts = []
+    for el in events:
+        event = {}
+        event['id'] = el.id
+
+        if el.org_id == 0:
+            event['org'] = 'Красный маяк'
+
+        event['type'] = Type.objects.filter(id=el.type_id).first().name
+        event['rank_id'] = Rank.objects.filter(id=el.rank_id).first().name
+        event['date'] = el.date
+        event['comment'] = el.comment
+        events_dicts.append(event)
+
     data = {
         'form': form,
-        'events': events,
+        'events': events_dicts,
         'types_names': types_names,
         'ranks_names': ranks_names
     }
