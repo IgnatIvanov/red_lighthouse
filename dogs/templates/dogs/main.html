@@ -3,16 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{% static 'dogs/css/main.css' %}">
+    <style>
+        h3.opensans {font-family: "Open Sans";}
+        p.opensans {font-family: "Open Sans";}
+    </style>
 </head>
 <body>
     <aside>
-        <h3>Добавить собаку</h3>
+        <h3 class="opensans">Добавить собаку</h3>
         <div class="features">
             <!-- <h1>Форма по добавлению собаки</h1> -->
             <form method="post">
                 {% csrf_token %}
                 <!-- {{ form.breed_id }}<br> -->
-                <p><input list="breeds" type="text" name="breed" placeholder="Порода"></p>
+                <p class="opensans"><input list="breeds" type="text" name="breed" placeholder="Порода"></p>
                 <p>{{ form.rkf }}</p><br>
                 {{ form.region }}<br>
                 {{ form.birth_date }}<br>

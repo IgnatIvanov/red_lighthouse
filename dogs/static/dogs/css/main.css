@@ -1,5 +1,14 @@
+@font-face {
+    font-family: 'Open Sans';
+    /* src: local("../fonts/Comfortaa-Light.ttf"), url("../fonts/Comfortaa-Light.ttf") format("ttf"); */
+    src: local("../fonts/OpenSans-Regular.ttf"), url("../OpenSans-Regular.ttf") format("truetype");
+    font-weight: 300;
+    font-style: normal;
+}
+
 body {
     background: #969696;
+    font-family: 'Open Sans';
 }
 
 aside {
