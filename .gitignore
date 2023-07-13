@@ -2,5 +2,6 @@
 /sqlite
 
 **/__pycache__
+*.ttf
 
 db.sqlite3
