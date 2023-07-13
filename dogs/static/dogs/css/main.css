@@ -31,6 +31,18 @@ aside h3 {
     position: left;
 }
 
+aside input {
+    width: 260px;
+}
+
+aside input[type=radio] {
+    width: 20px;
+}
+
+/* aside input[type=date] {
+    width: auto;
+} */
+
 main .main_h3 {
     /* margin-top: 20px; */
     font-size: 30px;

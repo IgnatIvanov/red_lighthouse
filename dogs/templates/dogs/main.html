@@ -10,43 +10,58 @@
 </head>
 <body>
     <aside>
-        <h3 class="opensans">Добавить собаку</h3>
+        {% if dog_id %}
+            <h3>Изменить собаку</h3>
+        {% else %}
+            <h3>Добавить собаку</h3>
+        {% endif %}
+        <!-- <h3 class="opensans">Добавить собаку</h3> -->
         <div class="features">
             <!-- <h1>Форма по добавлению собаки</h1> -->
             <form method="post">
                 {% csrf_token %}
-                <!-- {{ form.breed_id }}<br> -->
-                <p class="opensans"><input list="breeds" type="text" name="breed" placeholder="Порода"></p>
-                <p>{{ form.rkf }}</p><br>
-                {{ form.region }}<br>
-                {{ form.birth_date }}<br>
-                <!-- {{ form.is_male }} Мальчик<br> -->
-                <!-- <input type="checkbox" id="female" name="female"> Девочка<br> -->
+                <input list="breeds" type="text" name="breed" placeholder="Порода" value="{{ dog_breed }}"> <br>
+                <input type="text" id="rkf" name="rkf" placeholder="РКФ" value="{{ dog.rkf }}"> <br>
+                <input type="text" id="region" name="region" placeholder="Регион" value="{{ dog.region }}"> <br>
+                <input type="date" id="birth_date" name="birth_date" placeholder="{{ dog.birth_date }}" value="{{ dog_date }}"> <br>
+                
+                {% if dog.is_male == True %}
+                    <input type="radio" id="male" name="sex" value="male" checked>
+                    <label for="male">Кобель</label> <br>
 
-                <input type="radio" id="male" name="sex" value="male">
-                <label for="male">Кобель</label> <br>
+                    <input type="radio" id="female" name="sex" value="female">
+                    <label for="female">Сука</label> <br>
+                {% else %}
+                    <input type="radio" id="male" name="sex" value="male">
+                    <label for="male">Кобель</label> <br>
 
-                <input type="radio" id="female" name="sex" value="female">
-                <label for="female">Сука</label> <br>
+                    <input type="radio" id="female" name="sex" value="female" checked>
+                    <label for="female">Сука</label> <br>
+                {% endif %}
 
-                {{ form.tattoo }}<br>
-                {{ form.chip }}<br>
-                {{ form.name_ru }}<br>
-                {{ form.name_en }}<br>
-                {{ form.colour_ru }}<br>
-                {{ form.colour_en }}<br>
-                {{ form.breeder_id }}<br>
-                {{ form.owner_id }}<br>
-                {{ form.father_id }}<br>
-                {{ form.mother_id }}<br>
+                <input type="text" id="tattoo" name="tattoo" placeholder="Клеймо" value="{{ dog.tattoo }}"> <br>
+                <input type="text" id="chip" name="chip" placeholder="Чип" value="{{ dog.chip }}"> <br>
+                <input type="text" id="name_ru" name="name_ru" placeholder="Кличка на русском" value="{{ dog.name_ru }}"> <br>
+                <input type="text" id="name_en" name="name_en" placeholder="Кличка на английском" value="{{ dog.name_en }}"> <br>
+                <input type="text" id="colour_ru" name="colour_ru" placeholder="Окрас на русском" value="{{ dog.colour_ru }}"> <br>
+                <input type="text" id="colour_en" name="colour_en" placeholder="Окрас на английском" value="{{ dog.colour_en }}"> <br>
+                <input type="text" id="breeder" name="breeder" placeholder="Заводчик" value="{{ dog.breeder }}"> <br>
+                <input type="text" id="owner" name="owner" placeholder="Владелец" value="{{ dog.owner }}"> <br>
+                <input type="text" id="father_tattoo" name="father_tattoo" placeholder="Отец" value="{{ dog.father_tattoo }}"> <br>
+                <input type="text" id="mother_tattoo" name="mother_tattoo" placeholder="Мать" value="{{ dog.mother_tattoo }}"> <br>
                 <span>{{ error }}</span>
-                <button class="btn btn-success" type="submit">Добавить собаку</button>
+                {% if dog_id %}
+                    <button class="btn btn-success" type="submit" name="btn" value="update" formaction="{% url 'dogs_update' dog_id %}">Изменить</button>
+                {% else %}
+                    <button class="btn btn-success" type="submit" name="btn" value="add" >Добавить</button>
+                {% endif %}
             </form>
         
             <datalist id="breeds">
                 {% for el in breed_ru_names %}
                     <option value="{{ el }}"></option>
                 {% endfor %}
+            </datalist>
         </div>
     </aside>
 
@@ -67,14 +82,14 @@
                     <th>name_en</th>
                     <th>colour_ru</th>
                     <th>colour_en</th>
-                    <th>breeder_id</th>
-                    <th>owner_id</th>
-                    <th>father_id</th>
-                    <th>mother_id</th>
+                    <th>breeder</th>
+                    <th>owner</th>
+                    <th>father_tattoo</th>
+                    <th>mother_tattoo</th>
                 </tr>
                 {% for el in dogs %}
                     <tr>
-                        <th>{{ el.id }}</th>
+                        <th><a href="{% url 'dogs_update' el.id %}">{{ el.id }}</a></th>
                         <th>{{ el.breed_id }}</th>
                         <td>{{ el.rkf }}</td>
                         <td>{{ el.region }}</td>
@@ -86,10 +101,10 @@
                         <td>{{ el.name_en }}</td>
                         <td>{{ el.colour_ru }}</td>
                         <td>{{ el.colour_en }}</td>
-                        <td>{{ el.breeder_id }}</td>
-                        <td>{{ el.owner_id }}</td>
-                        <td>{{ el.father_id }}</td>
-                        <td>{{ el.mother_id }}</td>
+                        <td>{{ el.breeder }}</td>
+                        <td>{{ el.owner }}</td>
+                        <td>{{ el.father_tattoo }}</td>
+                        <td>{{ el.mother_tattoo }}</td>
                     </tr>
                 {% endfor %}
             {% else %}

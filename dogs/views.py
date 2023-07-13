@@ -1,56 +1,76 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponse
 from .models import Dog
-from .forms import DogsForm
 from .models import Breed
 
 
 
-# Не будет использоваться в будущем
-# def dogs_home(request):
-#     dogs = Dog.objects.order_by('id')
-#     return render(request, 'dogs/get_all.html', {'dogs': dogs})
 
+def dogs_update(request, dog_id):
 
-# Не будет использоваться в будущем
-# def create(request):
-#     error = ''
-#     if request.method == 'POST':
-#         form = DogsForm(request.POST)
-#         # if form.is_valid():
-#         #     form.save()
-#         #     return redirect('dogs_home')
-#         # else:
-#         #     error = 'Форма заполнена неверно'
-#         # Так можно брать значения породы для подстановки
-#         breed_name_ru = request.POST.get("breed")
-#         breed = Breed.objects.filter(name_ru=breed_name_ru).first()
-#         breed_id = breed.id
-#         print('breed_id', breed_id)
+    error = ''
 
-#     form = DogsForm()
-#     breeds = Breed.objects.all()
-#     breed_ru_names = []
-#     # print(breed_ru_names.get('name_ru'))
-#     for el in breeds:
-#         # print(el.name_ru)
-#         breed_ru_names.append(el.name_ru)
+    if request.method == 'POST':
 
-#     del breeds
+        if request.POST.get("btn") == 'update':
 
-#     data = {
-#         'form': form,
-#         'error': error,
-#         'breed_ru_names': breed_ru_names
-#     }
+            breed_name_ru = request.POST.get("breed")
+            breed = Breed.objects.filter(name_ru=breed_name_ru).first()
 
-#     return render(request, 'dogs/create.html', data)
+            number = Dog.objects.filter(id=dog_id).update(
+                breed_id = breed.id,
+                region = request.POST.get("region"),
+                rkf = request.POST.get("rkf"),
+                birth_date = request.POST.get("birth_date"),
+                is_male = request.POST.get("sex") == 'male',
+                tattoo = request.POST.get("tattoo"),
+                chip = request.POST.get("chip"),
+                name_ru = request.POST.get("name_ru"),
+                name_en = request.POST.get("name_en"),
+                colour_ru = request.POST.get("colour_ru"),
+                colour_en = request.POST.get("colour_en"),
+                breeder = request.POST.get("breeder"),
+                owner = request.POST.get("owner"),
+                father_tattoo = request.POST.get("father_tattoo"),
+                mother_tattoo = request.POST.get("mother_tattoo")
+            )
+            
+            return redirect('dogs_main')
+        
+    
+    dogs = Dog.objects.order_by('id')
+    current_dog = Dog.objects.filter(id=dog_id).first()
+    
+    breed = Breed.objects.filter(id=current_dog.breed_id).first()
+    current_breed = breed.name_ru
+
+    # Подготовка русских названий пород
+    breeds = Breed.objects.all()
+    breed_ru_names = []
+    for el in breeds:
+        breed_ru_names.append(el.name_ru)
+    del breeds
+
+    data = {
+        'dogs': dogs,
+        'error': error,
+        'breed_ru_names': breed_ru_names,
+        'dog': current_dog,
+        'dog_id': dog_id,
+        'dog_breed': current_breed,
+        'dog_date': str(current_dog.birth_date)
+    }
+
+    return render(request, 'dogs/main.html', data)
+
 
 
 def dogs_main(request):
     
     error = ''
-    if request.method == 'POST':
-        form = DogsForm(request.POST)
+
+    if request.method == 'POST' and request.POST.get("btn") == 'add':
+        # form = DogsForm(request.POST)
         # if form.is_valid():
         #     form.save()
         #     return redirect('dogs_home')
@@ -73,32 +93,23 @@ def dogs_main(request):
         dog.rkf = request.POST.get("rkf")
         dog.region = request.POST.get("region")
         dog.birth_date = request.POST.get("birth_date")
-
-        sex = request.POST.get("sex")
-        if sex == 'male':
-            dog.is_male = True
-        else:
-            dog.is_male = False
-
+        dog.is_male = request.POST.get("sex") == 'male'
         dog.tattoo = request.POST.get("tattoo")
         dog.chip = request.POST.get("chip")
         dog.name_ru = request.POST.get("name_ru")
         dog.name_en = request.POST.get("name_en")
         dog.colour_ru = request.POST.get("colour_ru")
         dog.colour_en = request.POST.get("colour_en")
-        dog.breeder_id = request.POST.get("breeder_id")
-        dog.owner_id = request.POST.get("owner_id")
-        dog.father_id = request.POST.get("father_id")
-        dog.mother_id = request.POST.get("mother_id")
+        dog.breeder = request.POST.get("breeder")
+        dog.owner = request.POST.get("owner")
+        dog.father_tattoo = request.POST.get("father_tattoo")
+        dog.mother_tattoo = request.POST.get("mother_tattoo")
         dog.save()
-        
 
-    form = DogsForm()
+
     breeds = Breed.objects.all()
     breed_ru_names = []
-    # print(breed_ru_names.get('name_ru'))
     for el in breeds:
-        # print(el.name_ru)
         breed_ru_names.append(el.name_ru)
 
     del breeds
@@ -106,7 +117,6 @@ def dogs_main(request):
 
     data = {
         'dogs': dogs,
-        'form': form,
         'error': error,
         'breed_ru_names': breed_ru_names
     }

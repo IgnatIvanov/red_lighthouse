@@ -21,10 +21,12 @@ class Dog(models.Model):
     name_en = models.TextField('Кличка на английском')
     colour_ru = models.TextField('Окрас на русском')
     colour_en = models.TextField('Окрас на английском')
-    breeder_id = models.IntegerField('Заводчик')
-    owner_id = models.IntegerField('Владелец')
-    father_id = models.IntegerField('Отец')
-    mother_id = models.IntegerField('Мать')
+    # breeder_id = models.IntegerField('Заводчик')
+    # owner_id = models.IntegerField('Владелец')
+    breeder = models.TextField('ФИО заводчика')
+    owner = models.TextField('ФИО владельца')
+    father_tattoo = models.TextField('Отец')
+    mother_tattoo = models.TextField('Мать')
 
     class Meta:
         
