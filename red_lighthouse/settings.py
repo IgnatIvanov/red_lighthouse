@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'classes',
     'event',
     'participant',
+    'out_doc',
 ]
 
 MIDDLEWARE = [

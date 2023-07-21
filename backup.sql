@@ -40,6 +40,7 @@ INSERT INTO django_migrations VALUES(36,'dogs','0005_remove_dog_breeder_id_remov
 INSERT INTO django_migrations VALUES(37,'dogs','0006_alter_dog_father_id_alter_dog_mother_id','2023-07-13 15:54:55.943881');
 INSERT INTO django_migrations VALUES(38,'dogs','0007_rename_father_id_dog_father_tattoo','2023-07-13 15:54:55.952880');
 INSERT INTO django_migrations VALUES(39,'dogs','0008_rename_mother_id_dog_mother_tattoo','2023-07-13 15:54:55.960880');
+INSERT INTO django_migrations VALUES(40,'event','0008_alter_event_rank_id','2023-07-21 12:07:35.563556');
 CREATE TABLE IF NOT EXISTS "auth_group_permissions" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "group_id" integer NOT NULL REFERENCES "auth_group" ("id") DEFERRABLE INITIALLY DEFERRED, "permission_id" integer NOT NULL REFERENCES "auth_permission" ("id") DEFERRABLE INITIALLY DEFERRED);
 CREATE TABLE IF NOT EXISTS "auth_user_groups" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "user_id" integer NOT NULL REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED, "group_id" integer NOT NULL REFERENCES "auth_group" ("id") DEFERRABLE INITIALLY DEFERRED);
 CREATE TABLE IF NOT EXISTS "auth_user_user_permissions" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "user_id" integer NOT NULL REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED, "permission_id" integer NOT NULL REFERENCES "auth_permission" ("id") DEFERRABLE INITIALLY DEFERRED);
@@ -1047,7 +1048,7 @@ INSERT INTO dogs_dog VALUES(121,'-','2021-05-14',1,'-','ЧЕРНЫЙ СТРАЖ�
 INSERT INTO dogs_dog VALUES(122,'-','2016-09-25',0,'-','-','Cherni Strazhnik Letkajenkka','чёрный','black','0',110,'4755339','BAP 218','Egorsheva M.L.','Egorsheva M.L.','0');
 INSERT INTO dogs_dog VALUES(123,'-','2021-08-09',0,'-','ДЖЕНТЛИ БОРН ТАНГО ИН ЗЕ НАЙТ','-','черно-подпалый','-','0',394,'6324089','JTB 342','Власова Н.П.','Ратковская Н.П.','0');
 DELETE FROM sqlite_sequence;
-INSERT INTO sqlite_sequence VALUES('django_migrations',39);
+INSERT INTO sqlite_sequence VALUES('django_migrations',40);
 INSERT INTO sqlite_sequence VALUES('django_admin_log',168);
 INSERT INTO sqlite_sequence VALUES('django_content_type',14);
 INSERT INTO sqlite_sequence VALUES('auth_permission',56);

@@ -1,0 +1,29 @@
+<p>Форма вывода собак</p>
+
+
+<table>
+    {% if dogs %}
+        <tr>
+            <th>Кличка</th>
+            <th>Порода</th>
+            <th>Пол</th>
+            <th>Дата рождения</th>
+            <th>Клеймо</th>
+            <th>Номер РКФ</th>
+            <th>Владелец</th>
+        </tr>
+        {% for el in dogs %}
+            <tr>
+                <th>{{ el.name }}</th>
+                <td>{{ el.breed }}</td>
+                <td>{{ el.sex }}</td>
+                <td>{{ el.birth_date }}</td>
+                <td>{{ el.tattoo }}</td>
+                <td>{{ el.rkf }}</td>
+                <td>{{ el.owner }}</td>
+            </tr>
+        {% endfor %}
+    {% else %}
+        <p>У вас нет записей!</p>
+    {% endif %}
+</table>
