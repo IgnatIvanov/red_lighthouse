@@ -1,26 +1,81 @@
 <p>Форма вывода собак</p>
 
+<!-- <input type="checkbox" id="scales" name="scales"> -->
 
+
+<form method="post">
+    {% csrf_token %}
+    <!-- Таблица событий -->
+    <h2>Запланированные события</h2>
+    <table>
+        {% if events %}
+            <tr>
+                <th> </th>
+                <th>Организатор</th>
+                <th>Тип</th>
+                <th>Ранг</th>
+                <th>Дата</th>
+                <th>Дополнительно</th>
+            </tr>
+            {% for el in events %}
+                <tr>
+                    <td>
+                        <input type="checkbox" id="events" name="event {{ el.id }}">
+                    </td>
+                    <td>{{ el.org }}</td>
+                    <td>{{ el.type }}</td>
+                    <td>{{ el.rank }}</td>
+                    <td>{{ el.date }}</td>
+                    <td>{{ el.comment }}</td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <p>Нет запланированных событий</p>
+        {% endif %}
+    </table>
+
+    <button 
+        class="btn btn-success" 
+        type="submit" 
+        name="btn" 
+        value="filter" 
+        formaction="{% url 'out_doc_main' %}">
+        Обновить
+
+    </button>
+</form>
+<br>{{ selected_events }}<br>
+<br>
+<br>
+<br>
+<br>
+
+
+
+<!-- Таблица собак -->
+<h2>Зарегистрированные собаки</h2>
 <table>
     {% if dogs %}
         <tr>
-            <th>Кличка</th>
+            <th>Группа FCI</th>
             <th>Порода</th>
+            <th>Судья, ринг</th>
             <th>Пол</th>
-            <th>Дата рождения</th>
-            <th>Клеймо</th>
-            <th>Номер РКФ</th>
-            <th>Владелец</th>
+            <th>Класс</th>
+            <th>№ п/п</th>
+            <th>dog_id</th>
+            <th>Кличка</th>
         </tr>
         {% for el in dogs %}
             <tr>
-                <th>{{ el.name }}</th>
-                <td>{{ el.breed }}</td>
-                <td>{{ el.sex }}</td>
-                <td>{{ el.birth_date }}</td>
-                <td>{{ el.tattoo }}</td>
-                <td>{{ el.rkf }}</td>
-                <td>{{ el.owner }}</td>
+                <th>{{ el.fci }}</th>
+                <td>{{ el.breed_ru }} \ <br> {{ el.breed_en }}</td>
+                <td>{{ el.judge }}, {{ el.ring }}</td>
+                <td>{{ el.sex_ru }} \ <br> {{ el.sex_en }}</td>
+                <td>{{ el.class_ru }} \ <br> {{ el.class_en }}</td>
+                <td>{{ el.npp }}</td>
+                <td>{{ el.dog_id }}</td>
+                <td>{{ el.name }}</td>
             </tr>
         {% endfor %}
     {% else %}

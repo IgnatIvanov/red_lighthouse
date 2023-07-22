@@ -2,7 +2,7 @@ from django.db import models
 
 class Breed(models.Model):
     
-    group = models.IntegerField('Группа')
+    group = models.IntegerField('Группа FCI')
     bid = models.IntegerField('Код породы')
     name_ru = models.TextField('Название русское')
     name_en = models.TextField('Название английское')    

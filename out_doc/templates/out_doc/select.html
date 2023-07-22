@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'out_doc/css/select.css' %}">
+    
+</head>
+
+<body>
+
+
+<h2>Начало работы</h2>
+{{ error }}
+
+
+
+<div class="accordion">
+    <input id="toggle1" type="radio" class="accordion-toggle" name="toggle" />
+    <label for="toggle1">Выбрать существующий проект</label>
+    <section>
+    <div>
+        {% if projects %}
+            {% for el in projects %}
+                
+                <div>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ el }}
+                        <button 
+                            formaction="{% url 'out_doc_edit_project' el %}">
+                            ОТКРЫТЬ
+                        </button>
+                    </form>
+                </div> 
+            {% endfor %}
+        {% else %}
+            Нет ранее созданных проектов
+        {% endif %}
+
+    </div>
+    </section>
+</div>
+<div class="accordion">
+    <input id="toggle2" type="radio" class="accordion-toggle" name="toggle" />
+    <label for="toggle2">Создать новый проект</label>
+    <section>
+    <div>
+        <form method="post">
+            {% csrf_token %}
+            <!-- Таблица событий -->
+            <h2>Выберите события</h2>
+            <table>
+                {% if events %}
+                    <tr>
+                        <th> </th>
+                        <th>Организатор</th>
+                        <th>Тип</th>
+                        <th>Ранг</th>
+                        <th>Дата</th>
+                        <th>Дополнительно</th>
+                    </tr>
+                    {% for el in events %}
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="events" name="event {{ el.id }}">
+                            </th>
+                            <td>{{ el.org }}</td>
+                            <td>{{ el.type }}</td>
+                            <td>{{ el.rank }}</td>
+                            <td>{{ el.date }}</td>
+                            <td>{{ el.comment }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <p>Нет запланированных событий</p>
+                {% endif %}
+            </table>
+        
+            <button 
+                class="btn btn-success" 
+                type="submit" 
+                name="btn" 
+                value="create" 
+                formaction="{% url 'out_doc_select_project' %}">
+                Создать проект        
+            </button>
+        </form>
+    </div>
+    </section>
+</div>
+    
+</body>

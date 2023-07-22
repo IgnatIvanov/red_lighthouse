@@ -1,6 +1,7 @@
 /venv
 /sqlite
 /документы
+/projects
 
 **/__pycache__
 *.ttf

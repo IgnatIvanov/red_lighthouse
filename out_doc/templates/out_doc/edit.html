@@ -1,0 +1,154 @@
+{% load static %}
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'out_doc/css/edit.css' %}">
+    <script type="text/javascript">
+        
+        function declineRename() {
+            document.getElementById('RenameForm').reset();
+            document.getElementById('toggle1').checked = false;
+        }; 
+        
+        function declineDelete() {
+            document.getElementById('toggle2').checked = false;
+        };
+
+        function closeIfOpen(accordion_id) {
+            // alert(accordion_id);
+            current_state = document.getElementById(accordion_id).checked;
+            if (current_state) {
+                document.getElementById(accordion_id).checked = false;
+            }
+            else {
+                document.getElementById(accordion_id).checked = true;
+            };
+        };
+    </script>
+</head>
+<body>
+
+
+
+<h1>ПРОЕКТ «{{ project_name }}»</h1>
+
+<form method="post">
+    {% csrf_token %}
+    <button 
+        formaction="{% url 'out_doc_select_project' %}">
+        Вернуться к выбору проекта
+    </button>
+</form>
+
+<h2>Управление проектом</h2>
+<div class="accordion" onclick="closeIfOpen('manage1')">
+    <input id="manage1" type="radio" class="accordion-toggle" name="toggle" />
+    <label>Переименовать проект</label>
+    <section>
+    <div>
+        Введите новое название проекта
+        <form role="form" action="/requestFine" autocomplete="off" method="POST" id="RenameForm">
+            {% csrf_token %}
+            <label>Новое название:</label>
+            <input type="text" name="project_new_name">
+            <button
+                type="submit"
+                class="btn btn-success"
+                name="btn"
+                value="rename_project"
+                form="RenameForm"
+                formaction="{% url 'out_doc_rename_project' project_name %}">
+                Ввод
+            </button>
+        </form>
+        <button form="no_form" onclick="declineRename()">Отмена</button>
+    </div>
+    </section>
+</div>
+<div class="accordion" onclick="closeIfOpen('manage2')">
+    <input id="manage2" type="radio" class="accordion-toggle" name="toggle" />
+    <label>Удалить проект</label>
+    <section>
+    <div>
+        Проект будет удалён безвозвратно. Удалить?
+        <form method="post">
+            {% csrf_token %}
+            <button 
+                formaction="{% url 'out_doc_delete_project' project_name %}">
+                Удалить
+            </button>
+            <button form="no_form" onclick="declineDelete()">Отмена</button>
+        </form>
+    </div>
+    </section>
+</div>
+
+
+
+<h2>Вывод документов</h2>
+<form method="post">
+{% csrf_token %}
+<button 
+        class="btn btn-success" 
+        type="submit" 
+        name="btn" 
+        value="print_temp_sertif" 
+        formaction="{% url 'out_doc_edit_project' project_name %}">
+        Временные сертификаты
+</button>
+
+{% if events_list %} {{ temp_sertif_message }} {% endif %}
+
+</form>
+
+
+
+<h2>Собаки в проекте</h2>
+
+{% for event in events.values %}
+<div class="accordion" onclick="closeIfOpen('event{{ event.id }}')">
+    <input id="event{{ event.id }}" type="radio" class="accordion-toggle" name="toggle" />
+    <label>
+        Орг.: {{ event.org }},
+        Тип: {{ event.type }},
+        Ранг: {{ event.rank }},
+        Дата: {{ event.date }},
+        Доп.: {{ event.comment }}
+    </label>
+    <section>
+    <div>
+        {% if event.participants_data %}
+        
+        <table>
+            <tr>
+                <th>Группа FCI</th>
+                <th>Порода</th>
+                <th>Судья, ринг</th>
+                <th>Пол</th>
+                <th>Класс</th>
+                <th>№ п/п</th>
+                <th>dog_id</th>
+                <th>Кличка</th>
+            </tr>
+            {% for dog in event.participants_data %}
+            <tr>
+                <th>{{ dog.fci }}</th>
+                <td>{{ dog.breed_ru }} \ <br> {{ dog.breed_en }}</td>
+                <td>{{ dog.judge }}, {{ dog.ring }}</td>
+                <td>{{ dog.sex_ru }} \ <br> {{ dog.sex_en }}</td>
+                <td>{{ dog.class_ru }} \ <br> {{ dog.class_en }}</td>
+                <td>{{ dog.npp }}</td>
+                <td>{{ dog.dog_id }}</td>
+                <td>{{ dog.name }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+            Никто пока не записался.
+        {% endif %}
+    </div>
+    </section>
+</div>
+{% endfor %}
+    
+</body>

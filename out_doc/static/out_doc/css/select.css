@@ -1,0 +1,105 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+  
+body {
+  margin: 10px;
+}
+  
+.accordion {
+  transform: translateZ(0);
+  background: white;
+  border-bottom: 1px solid lightgray;
+  border-left: 1px solid lightgray;
+  border-right: 1px solid lightgray;
+}
+  
+.accordion>.accordion-toggle {
+  display: none;
+  position: absolute;
+  opacity: 0;
+}
+  
+.accordion>label {
+  display: block;
+  position: relative;
+  height: 50px;
+  line-height: 50px;
+  padding: 0 20px;
+  border-top: 1px solid lightgray;
+  border-bottom: 1px solid lightgray;
+  background: #ecebec;
+  color: #555;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+  
+.accordion>label:after {
+  content: '';
+  position: absolute;
+  top: 12px;
+  right: 20px;
+  width: 12px;
+  height: 12px;
+  border-left: 2px solid #555;
+  border-top: 2px solid #555;
+  transform: rotate(-135deg);
+  transition: 0.4s transform;
+}
+  
+.accordion>section {
+  overflow: hidden;
+  height: 0;
+  transition: all 0.4s;
+}
+  
+.accordion>.accordion-toggle:checked~label:after {
+  transform: rotate(45deg);
+  top: 16px;
+}
+  
+.accordion>.accordion-toggle:checked~section {
+  /* height: 85%; */
+  height: 500px;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+  
+.accordion>section div {
+  margin: 15px 0;
+  padding: 0 20px;
+}
+
+/* #blablabla {
+  display: none;
+  animation-duration: 1.5s;
+  animation-fill-mode: both;
+  animation-name: fadeIn;
+}
+
+#blablabla.open {
+  display: block;
+} */
+
+#RenameForm {
+  display: none;
+  animation-duration: 1.5s;
+  animation-fill-mode: both;
+  animation-name: fadeIn;
+}
+
+#RenameForm.open {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
