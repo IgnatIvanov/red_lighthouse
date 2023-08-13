@@ -1,6 +1,9 @@
 import os
 import json
+import shutil
 import string
+from zipfile import ZipFile
+from django.http import FileResponse
 from django.shortcuts import render, redirect
 from .models import Dog
 from .models import Breed
@@ -20,7 +23,7 @@ save_dir = 'документы/'
 
 
 # Функция печати временных сертификатов
-def print_temp_sertif(events, dt_now, project_name):
+def print_temp_sertif(events, temp_path, project_name):
 
     # Загрузка документа
     template_name = 'временный сертификат.docx'
@@ -29,7 +32,7 @@ def print_temp_sertif(events, dt_now, project_name):
     for event in events.values():
 
         # Путь сохранения изменённого документа
-        save_path = save_dir
+        save_path = temp_path + '/'
         save_path += project_name + '/'
         save_path += 'Тестирование ' + event['rank'] + ' ' + event['comment'] + '/'
     
@@ -358,10 +361,12 @@ def edit_project(request, project_name):
     events_list = get_events_list(selected_events)
     events = {}
 
+
     for el in selected_events:
 
         el_str = str(el)
         events[el_str] = project_file[el_str]
+
 
     data = {
         'project_name': project_name,
@@ -369,19 +374,51 @@ def edit_project(request, project_name):
         'events_list': events_list,
         'events': events
     }
+    
 
-    # for el in selected_events:
-    #     el_str = str(el)
-    #     data[el_str] = project_file[el_str]
+    # Удаление старых временных папок
+    for root, dirs, files in os.walk(save_dir):
+        for dir in dirs:
+            shutil.rmtree(root + '/' + dir)   
+
 
     # Обработка входящего post запроса
     if request.method == 'POST':
         button = request.POST.get("btn")
         if button == 'print_temp_sertif':
             # Нажата кнопка создания временных сертификатов
-            dt_now = str(dt.datetime.now()).replace(':','.')
-            print_temp_sertif(events, dt_now, project_name)
-            data['temp_sertif_message'] = 'Временные сертификаты созданы'
+
+            # Создание временной папки для подготовки документации
+            temp_path = save_dir + str(dt.datetime.now()).replace(':', '.')
+
+            # Пути проекта
+            project_path  = temp_path + '/' + project_name
+
+            # Путь сохранения архива с документами проекта
+            zip_path = project_path + '.zip'
+
+            # Создание временных сертификатов тестирования
+            print_temp_sertif(events, temp_path, project_name)
+
+            # Обход готовых файлов проекта
+            real_file_path = []
+            for root, dirs, files in os.walk(project_path):
+                for filename in files:
+                    real_path = root + '/' + filename
+                    real_file_path.append(real_path)
+
+            # Запись файлов в архив
+            with ZipFile(zip_path, "w") as myzip:
+                for i in range(len(real_file_path)):
+                    real_file = real_file_path[i]
+                    zip_file = real_file.replace(project_path, '')
+                    myzip.write(real_file, zip_file)
+            
+            # Отправка созданного архива в ответ
+            zip = open(zip_path, 'rb')
+            response = FileResponse(zip)
+
+            return response
             
             
     return render(request, 'out_doc/edit.html', data)
@@ -470,6 +507,8 @@ def main(request):
 
 def delete_participant(request, participant_id):
     # Запрос на удаление заявки на участие собаки на одной выставке
+    # Принимает на вход уникальный id участника
+    # Удаляет участника из файла проекта и из таблицы участников в БД
     
     Participant.objects.filter(id=participant_id).delete()
     
