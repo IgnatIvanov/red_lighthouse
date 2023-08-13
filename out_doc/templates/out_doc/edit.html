@@ -118,7 +118,7 @@
     <section>
     <div>
         {% if event.participants_data %}
-        
+
         <table>
             <tr>
                 <th>Группа FCI</th>
@@ -140,6 +140,7 @@
                 <td>{{ dog.npp }}</td>
                 <td>{{ dog.dog_id }}</td>
                 <td>{{ dog.name }}</td>
+                <td> <a href="{% url 'out_doc_delete_participant' dog.participant_id %}">УДАЛИТЬ</a> </td>
             </tr>
             {% endfor %}
         </table>

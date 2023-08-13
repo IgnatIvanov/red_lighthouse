@@ -66,35 +66,35 @@ def print_temp_sertif(events, dt_now, project_name):
     return
 
     # Путь сохранения изменённого документа
-    save_path = save_dir
-    save_path += project_name + '/'
-    save_path += 'Тестирование/'
+    # save_path = save_dir
+    # save_path += project_name + '/'
+    # save_path += 'Тестирование/'
     
-    os.makedirs(save_path)  # Создание пути сохранения файла
+    # os.makedirs(save_path)  # Создание пути сохранения файла
     
-    for i in range(len(dogs_list)):
+    # for i in range(len(dogs_list)):
 
-        doc = DocxTemplate(template_file)
+    #     doc = DocxTemplate(template_file)
 
-        dogie = dogs_list[i]
+    #     dogie = dogs_list[i]
 
-        sex = '{} \ {}'.format(dogie['sex_ru'], dogie['sex_en'])
+    #     sex = '{} \ {}'.format(dogie['sex_ru'], dogie['sex_en'])
 
-        # Подстановка данных
-        context = {
-            'name': dogie['name'],
-            'sex': sex,
-            'tattoo': dogie['tattoo'],
-            'rkf': dogie['rkf'],
-            'birth': dogie['birth_date'],
-            'owner': dogie['owner'],
-            'breed': dogie['breed']
-        }
-        doc.render(context)
+    #     # Подстановка данных
+    #     context = {
+    #         'name': dogie['name'],
+    #         'sex': sex,
+    #         'tattoo': dogie['tattoo'],
+    #         'rkf': dogie['rkf'],
+    #         'birth': dogie['birth_date'],
+    #         'owner': dogie['owner'],
+    #         'breed': dogie['breed']
+    #     }
+    #     doc.render(context)
 
-        # Сохранение документа
-        save_file = save_path + dogs_list[i]['tattoo'] + '.docx'
-        doc.save(save_file)
+    #     # Сохранение документа
+    #     save_file = save_path + dogs_list[i]['tattoo'] + '.docx'
+    #     doc.save(save_file)
 
 
 
@@ -183,6 +183,7 @@ def get_participants_data(selected_events_id):
         dogie['class_en'] = class_obj.name_en
         dogie['npp'] = 0
         dogie['dog_id'] = dog_obj.id
+        dogie['participant_id'] = el.id
 
         dogie['name'] = dog_obj.name_ru
         if dogie['name'] == '-':
@@ -342,7 +343,7 @@ def create_project(events_id):
 
 
 # ----------------------------------------------------------------------------------------
-# ОБРАБОТЧИКИ ФОРМ
+# ОБРАБОТЧИКИ ЗАПРОСОВ
 
 
 
@@ -356,6 +357,7 @@ def edit_project(request, project_name):
     selected_events = project_file['events_id']
     events_list = get_events_list(selected_events)
     events = {}
+
     for el in selected_events:
 
         el_str = str(el)
@@ -368,9 +370,9 @@ def edit_project(request, project_name):
         'events': events
     }
 
-    for el in selected_events:
-        el_str = str(el)
-        data[el_str] = project_file[el_str]
+    # for el in selected_events:
+    #     el_str = str(el)
+    #     data[el_str] = project_file[el_str]
 
     # Обработка входящего post запроса
     if request.method == 'POST':
@@ -463,3 +465,37 @@ def main(request):
     }
 
     return render(request, 'out_doc/main.html', data)
+
+
+
+def delete_participant(request, participant_id):
+    # Запрос на удаление заявки на участие собаки на одной выставке
+    
+    Participant.objects.filter(id=participant_id).delete()
+    
+    project_name = request.META.get('HTTP_REFERER').split('/')[-1]
+
+    project_path = 'projects/' + project_name + '.json'
+    project_file = open_project(project_path)
+
+    selected_events = project_file['events_id']
+    for event_id in selected_events:
+        event_data = project_file[str(event_id)]        
+        participants_data = event_data['participants_data']
+        for i in range(len(participants_data)):
+            if participants_data[i]['participant_id'] == participant_id:
+                participants_data.pop(i)
+
+        event_data['participants_data'] = participants_data
+        project_file[str(event_id)] = event_data
+
+
+    with open(project_path, 'w') as outfile:
+        json.dump(
+            project_file, 
+            outfile, 
+            ensure_ascii=False, 
+            indent=4
+        )
+    
+    return redirect(request.META.get('HTTP_REFERER'))

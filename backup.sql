@@ -213,6 +213,8 @@ INSERT INTO django_admin_log VALUES(165,'2','Participant object (2)',3,'',12,1,'
 INSERT INTO django_admin_log VALUES(166,'1','Participant object (1)',3,'',12,1,'2023-07-11 09:29:56.632411');
 INSERT INTO django_admin_log VALUES(167,'242','Participant object (242)',2,'[{"changed": {"fields": ["Id \u0441\u043e\u0431\u044b\u0442\u0438\u044f"]}}]',12,1,'2023-07-11 21:13:10.983535');
 INSERT INTO django_admin_log VALUES(168,'124','Dog object (124)',3,'',8,1,'2023-07-13 19:03:35.898787');
+INSERT INTO django_admin_log VALUES(169,'305','Participant object (305)',3,'',12,1,'2023-08-03 10:59:24.065585');
+INSERT INTO django_admin_log VALUES(170,'304','Participant object (304)',3,'',12,1,'2023-08-03 10:59:24.071643');
 CREATE TABLE IF NOT EXISTS "django_content_type" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "app_label" varchar(100) NOT NULL, "model" varchar(100) NOT NULL);
 INSERT INTO django_content_type VALUES(1,'admin','logentry');
 INSERT INTO django_content_type VALUES(2,'auth','permission');
@@ -287,11 +289,12 @@ INSERT INTO auth_permission VALUES(55,14,'delete_rank','Can delete Ранг');
 INSERT INTO auth_permission VALUES(56,14,'view_rank','Can view Ранг');
 CREATE TABLE IF NOT EXISTS "auth_group" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(150) NOT NULL UNIQUE);
 CREATE TABLE IF NOT EXISTS "auth_user" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "password" varchar(128) NOT NULL, "last_login" datetime NULL, "is_superuser" bool NOT NULL, "username" varchar(150) NOT NULL UNIQUE, "last_name" varchar(150) NOT NULL, "email" varchar(254) NOT NULL, "is_staff" bool NOT NULL, "is_active" bool NOT NULL, "date_joined" datetime NOT NULL, "first_name" varchar(150) NOT NULL);
-INSERT INTO auth_user VALUES(1,'pbkdf2_sha256$600000$BMiE5PenNdKw6B6djl4tBh$BSA+5KzsRKhqvuEvj05cBLkOcfVRJgu0+TBs7i3aI9E=','2023-07-06 19:03:54.750813',1,'admin','','',1,1,'2023-07-03 21:26:02.999042','');
+INSERT INTO auth_user VALUES(1,'pbkdf2_sha256$600000$BMiE5PenNdKw6B6djl4tBh$BSA+5KzsRKhqvuEvj05cBLkOcfVRJgu0+TBs7i3aI9E=','2023-07-29 15:26:25.194010',1,'admin','','',1,1,'2023-07-03 21:26:02.999042','');
 CREATE TABLE IF NOT EXISTS "django_session" ("session_key" varchar(40) NOT NULL PRIMARY KEY, "session_data" text NOT NULL, "expire_date" datetime NOT NULL);
 INSERT INTO django_session VALUES('w0z4sp0jaq6h9y72gu13w2368vjh036u','.eJxVjDkOwjAUBe_iGlnmxxuU9Jwh-ptxACVSnFSIu0OkFNC-mXkv0-O61H5tOveDmLM5msPvRsgPHTcgdxxvk-VpXOaB7KbYnTZ7nUSfl939O6jY6reOUEikgEBA9gKKwblIwqohF3aJoiTymD2WmDBT4U47OAHnlMSDeX8AILw5IA:1qGR5P:6Bs1Tu4zpeoWmA5KzQjvekusPx0-4Bz9dnMEH4yHoNw','2023-07-17 21:27:55.950746');
 INSERT INTO django_session VALUES('8xrbh50b001rr9nyc7ajfiskrybnk39p','.eJxVjDkOwjAUBe_iGlnmxxuU9Jwh-ptxACVSnFSIu0OkFNC-mXkv0-O61H5tOveDmLM5msPvRsgPHTcgdxxvk-VpXOaB7KbYnTZ7nUSfl939O6jY6reOUEikgEBA9gKKwblIwqohF3aJoiTymD2WmDBT4U47OAHnlMSDeX8AILw5IA:1qH838:_RnxLrWKa6GywPrc1a9rqizQiwR-f6dBB2HfzPcc4SM','2023-07-19 19:20:26.463393');
 INSERT INTO django_session VALUES('nsb40sbsj82y3496pvxerthhnx05jamx','.eJxVjDkOwjAUBe_iGlnmxxuU9Jwh-ptxACVSnFSIu0OkFNC-mXkv0-O61H5tOveDmLM5msPvRsgPHTcgdxxvk-VpXOaB7KbYnTZ7nUSfl939O6jY6reOUEikgEBA9gKKwblIwqohF3aJoiTymD2WmDBT4U47OAHnlMSDeX8AILw5IA:1qHUGg:iQi5Z-TUFmJyxY35lXoVVzjk1cCWwN2Mhv25a-YhC9I','2023-07-20 19:03:54.756813');
+INSERT INTO django_session VALUES('9x05910w3iz4bry59mxyag9g7qh1cqj0','.eJxVjDkOwjAUBe_iGlnmxxuU9Jwh-ptxACVSnFSIu0OkFNC-mXkv0-O61H5tOveDmLM5msPvRsgPHTcgdxxvk-VpXOaB7KbYnTZ7nUSfl939O6jY6reOUEikgEBA9gKKwblIwqohF3aJoiTymD2WmDBT4U47OAHnlMSDeX8AILw5IA:1qPlpp:0mUFaS3Wp94o_3fVPlMVrP2v-9iQV4Dzz-v8MalhGS8','2023-08-12 15:26:25.200010');
 CREATE TABLE IF NOT EXISTS "breed_breed" (
     "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, 
     "group" integer NOT NULL,
@@ -1049,13 +1052,13 @@ INSERT INTO dogs_dog VALUES(122,'-','2016-09-25',0,'-','-','Cherni Strazhnik Let
 INSERT INTO dogs_dog VALUES(123,'-','2021-08-09',0,'-','ДЖЕНТЛИ БОРН ТАНГО ИН ЗЕ НАЙТ','-','черно-подпалый','-','0',394,'6324089','JTB 342','Власова Н.П.','Ратковская Н.П.','0');
 DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('django_migrations',40);
-INSERT INTO sqlite_sequence VALUES('django_admin_log',168);
+INSERT INTO sqlite_sequence VALUES('django_admin_log',170);
 INSERT INTO sqlite_sequence VALUES('django_content_type',14);
 INSERT INTO sqlite_sequence VALUES('auth_permission',56);
 INSERT INTO sqlite_sequence VALUES('auth_group',0);
 INSERT INTO sqlite_sequence VALUES('auth_user',1);
 INSERT INTO sqlite_sequence VALUES('classes_dogclass',10);
-INSERT INTO sqlite_sequence VALUES('participant_participant',303);
+INSERT INTO sqlite_sequence VALUES('participant_participant',307);
 INSERT INTO sqlite_sequence VALUES('event_event',24);
 INSERT INTO sqlite_sequence VALUES('dogs_dog',124);
 CREATE UNIQUE INDEX "auth_group_permissions_group_id_permission_id_0cd325b0_uniq" ON "auth_group_permissions" ("group_id", "permission_id");
