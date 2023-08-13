@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from breed import views as breed_views
 from out_doc import views as out_doc_views
+from landing import views as landing_views
 
 
 
@@ -28,5 +29,6 @@ urlpatterns = [
     path('', include('out_doc.urls')),
     path('dogs/', include('dogs.urls')),
     path('events/', include('event.urls')),
-    path('participant/', include('participant.urls'))
+    path('participant/', include('participant.urls')),
+    path('landing', landing_views.landing, name='landing')
 ]
