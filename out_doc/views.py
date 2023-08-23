@@ -101,6 +101,11 @@ def print_temp_sertif(events, temp_path, project_name):
 
 
 
+def create_events_catalogs(events, temp_path, project_name):
+    print("events_catalogs_checkbox")
+
+
+
 # Функция получения списка событий
 def get_events_list(selected_events = []):
 
@@ -383,45 +388,110 @@ def edit_project(request, project_name):
 
 
     # Обработка входящего post запроса
-    if request.method == 'POST':
-        button = request.POST.get("btn")
-        if button == 'print_temp_sertif':
-            # Нажата кнопка создания временных сертификатов
+    # if request.method == 'POST':
+    #     button = request.POST.get("btn")
+    #     if button == 'print_temp_sertif':
+    #         # Нажата кнопка создания временных сертификатов
 
-            # Создание временной папки для подготовки документации
-            temp_path = save_dir + str(dt.datetime.now()).replace(':', '.')
+    #         # Создание временной папки для подготовки документации
+    #         temp_path = save_dir + str(dt.datetime.now()).replace(':', '.')
 
-            # Пути проекта
-            project_path  = temp_path + '/' + project_name
+    #         # Пути проекта
+    #         project_path  = temp_path + '/' + project_name
 
-            # Путь сохранения архива с документами проекта
-            zip_path = project_path + '.zip'
+    #         # Путь сохранения архива с документами проекта
+    #         zip_path = project_path + '.zip'
 
-            # Создание временных сертификатов тестирования
-            print_temp_sertif(events, temp_path, project_name)
+    #         # Создание временных сертификатов тестирования
+    #         print_temp_sertif(events, temp_path, project_name)
 
-            # Обход готовых файлов проекта
-            real_file_path = []
-            for root, dirs, files in os.walk(project_path):
-                for filename in files:
-                    real_path = root + '/' + filename
-                    real_file_path.append(real_path)
+    #         # Обход готовых файлов проекта
+    #         real_file_path = []
+    #         for root, dirs, files in os.walk(project_path):
+    #             for filename in files:
+    #                 real_path = root + '/' + filename
+    #                 real_file_path.append(real_path)
 
-            # Запись файлов в архив
-            with ZipFile(zip_path, "w") as myzip:
-                for i in range(len(real_file_path)):
-                    real_file = real_file_path[i]
-                    zip_file = real_file.replace(project_path, '')
-                    myzip.write(real_file, zip_file)
+    #         # Запись файлов в архив
+    #         with ZipFile(zip_path, "w") as myzip:
+    #             for i in range(len(real_file_path)):
+    #                 real_file = real_file_path[i]
+    #                 zip_file = real_file.replace(project_path, '')
+    #                 myzip.write(real_file, zip_file)
             
-            # Отправка созданного архива в ответ
-            zip = open(zip_path, 'rb')
-            response = FileResponse(zip)
+    #         # Отправка созданного архива в ответ
+    #         zip = open(zip_path, 'rb')
+    #         response = FileResponse(zip)
 
-            return response
+    #         return response
             
             
     return render(request, 'out_doc/edit.html', data)
+
+
+
+def create_project_doc(request, project_name):
+    # Запрос создания выбранной документации для проекта
+
+    # Обработка входящего post запроса
+    if request.method == 'POST':
+
+        project_path = 'projects/' + project_name + '.json'
+        project_file = open_project(project_path)
+
+        selected_events = project_file['events_id']
+        # events_list = get_events_list(selected_events)
+        events = {}
+
+
+        for el in selected_events:
+            el_str = str(el)
+            events[el_str] = project_file[el_str]
+
+        # Создание временной папки для подготовки документации
+        temp_path = save_dir + str(dt.datetime.now()).replace(':', '.')
+
+        # Пути проекта
+        project_path  = temp_path + '/' + project_name
+
+        # Путь сохранения архива с документами проекта
+        zip_path = project_path + '.zip'
+
+
+        # Проверка запроса временных сертификатов тестирования
+        if request.POST.get("temp_sertif_checkbox") == 'on':
+            # Создание временных сертификатов тестирования
+            print_temp_sertif(events, temp_path, project_name)
+
+        # Проверка запроса каталогов на каждое событие в проекте
+        if request.POST.get("events_catalogs_checkbox") == 'on':
+            create_events_catalogs(events, temp_path, project_name)
+
+
+        
+        # Подготовка документов к отправке
+        # Обход готовых файлов проекта
+        real_file_path = []
+        for root, dirs, files in os.walk(project_path):
+            for filename in files:
+                real_path = root + '/' + filename
+                real_file_path.append(real_path)
+
+        # Запись файлов в архив
+        with ZipFile(zip_path, "w") as myzip:
+            for i in range(len(real_file_path)):
+                real_file = real_file_path[i]
+                zip_file = real_file.replace(project_path, '')
+                myzip.write(real_file, zip_file)
+        
+        # Отправка созданного архива в ответ
+        zip = open(zip_path, 'rb')
+        response = FileResponse(zip)
+
+        return response
+
+
+    return redirect('out_doc_edit_project', project_name = project_name)
 
 
 

@@ -88,13 +88,31 @@
 <h2>Вывод документов</h2>
 <form method="post">
 {% csrf_token %}
-<button 
+<!-- <button 
         class="btn btn-success" 
         type="submit" 
         name="btn" 
         value="print_temp_sertif" 
         formaction="{% url 'out_doc_edit_project' project_name %}">
         Временные сертификаты
+</button> -->
+
+<div>
+    <input type="checkbox" name="temp_sertif_checkbox" id="temp_sertif_checkbox" />
+    <label for="temp_sertif_checkbox">Временные сертификаты (тестирование)</label>
+</div>
+
+<div>
+    <input type="checkbox" name="events_catalogs_checkbox" id="events_catalogs_checkbox" />
+    <label for="events_catalogs_checkbox">Каталоги на каждое событие</label>
+</div>
+
+<button 
+        class="btn btn-success" 
+        type="submit" 
+        name="create_doc_btn" 
+        formaction="{% url 'create_project_doc' project_name %}">
+        Создать документы
 </button>
 
 {% if events_list %} {{ temp_sertif_message }} {% endif %}
