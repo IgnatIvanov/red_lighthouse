@@ -13,6 +13,7 @@ from .models import Rank
 from .models import Participant
 from .models import DogClass
 from docxtpl import DocxTemplate
+from openpyxl import Workbook
 import datetime as dt
 
 
@@ -103,6 +104,132 @@ def print_temp_sertif(events, temp_path, project_name):
 
 def create_events_catalogs(events, temp_path, project_name):
     print("events_catalogs_checkbox")
+
+    for event in events.values():
+
+        # Создание чистого Excel документа
+        wb = Workbook()
+        # Делаем единственный лист активным
+        ws = wb.active
+
+        # Путь сохранения нового каталога
+        save_path = temp_path + '/'
+        save_path += project_name + '/'
+        
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)  # Создание пути сохранения файла
+
+        save_path += 'Каталог ' + event['rank'] + ' ' + event['comment'] + '.xlsx'
+
+
+        
+        dogs_list = event['participants_data']
+
+        current_fci = ''
+        current_breed = ''
+        current_sex = ''
+        current_class = ''
+        current_line = 1
+        # d = ws.cell(row=1, column=1, value=current_fci)
+
+        for i in range(len(dogs_list)):
+            fci = dogs_list[i]['fci']
+            dog_id = dogs_list[i]['dog_id']
+            dog_obj = Dog.objects.filter(id=dog_id).first()
+            participant_id = dogs_list[i]['participant_id']
+            breed_obj = Breed.objects.filter(id=dog_obj.breed_id).first()
+            parts_object = Participant.objects.filter(id=participant_id).first()
+            class_obj = DogClass.objects.filter(id=parts_object.class_id).first()
+            
+            if fci != current_fci:
+                # print(fci)
+                # d = ws.cell(row=1, column=1, value=current_fci)
+                current_line += 1
+                current_fci = fci
+                value = str(current_fci) + ' ГРУППА F.C.I.'
+                cell = 'A' + str(current_line)
+                current_line += 2
+                ws[cell] = value
+
+            name_ru = breed_obj.name_ru
+            country_ru = breed_obj.country_ru
+            name_en = breed_obj.name_en
+            country_en = breed_obj.country_en
+            breed_str = '{} ({}) \ {} ({})'.format(name_ru, country_ru, name_en, country_en)
+
+            if breed_str != current_breed:
+                current_line += 1
+                current_breed = breed_str
+                cell = 'A' + str(current_line)
+                current_line += 2
+                ws[cell] = current_breed
+
+            sex_str = 'СУКИ \ FEMALES'
+            if dog_obj.is_male == True:
+                sex_str = 'КОБЕЛИ \ MALES'
+
+            if sex_str != current_sex:
+                current_line += 1
+                current_sex = sex_str
+                cell = 'A' + str(current_line)
+                current_line += 2
+                ws[cell] = current_sex
+
+            class_str = 'Класс: {} \ {} class'.format(class_obj.name_ru, class_obj.name_en.capitalize())
+
+            if class_str != current_class:
+                current_line += 1
+                current_class = class_str
+                cell = 'A' + str(current_line)
+                current_line += 2
+                ws[cell] = current_class
+
+            dogie_str = ''
+            dogie_str += str(dogs_list[i]['npp']) + '. '
+            dogie_str += dogs_list[i]['name'] + ', '
+            dogie_str += 'д.р. ' + dogs_list[i]['birth_date'] + ', '
+            dogie_str += dogs_list[i]['tattoo'] + ', '
+
+            colour_str = dog_obj.colour_ru
+            if colour_str == '-':
+                colour_str = dog_obj.colour_en
+            dogie_str += colour_str + ', '
+
+            # Разобраться с вводом родителей собаки
+
+            # father_obj = Dog.objects.filter(tattoo=dog_obj.father_tattoo).first()
+            # mother_obj = Dog.objects.filter(tattoo=dog_obj.mother_tattoo).first()
+
+            # father_name = father_obj.name_ru
+            # if father_name == '-':
+            #     father_name = father_obj.name_en
+
+            # mother_name = mother_obj.name_ru
+            # if mother_name == '-':
+            #     mother_name = mother_obj.name_en
+
+            # dogie_str += father_name + 'X' + mother_name + ', '
+
+            dogie_str += 'зав. ' + dog_obj.breeder + ', '
+            dogie_str += 'вл. ' + dog_obj.owner
+
+
+
+            cell = 'A' + str(current_line)
+            current_line += 1
+            ws[cell] = dogie_str
+
+            
+
+
+            # print(dogs_list[i])
+            # break
+
+
+        
+        wb.save(save_path)
+        del wb
+        
 
 
 
