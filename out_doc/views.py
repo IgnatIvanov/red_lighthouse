@@ -14,6 +14,8 @@ from .models import Participant
 from .models import DogClass
 from docxtpl import DocxTemplate
 from openpyxl import Workbook
+from openpyxl.styles import Font
+from openpyxl.styles import Alignment
 import datetime as dt
 
 
@@ -103,7 +105,77 @@ def print_temp_sertif(events, temp_path, project_name):
 
 
 def create_events_catalogs(events, temp_path, project_name):
-    print("events_catalogs_checkbox")
+    # Создание каталогов для каждого события отдельно
+
+
+    # Оформление документа
+    doc_font_name = 'Times New Roman'
+    doc_font_size = 12
+    doc_width = 85
+
+    # Оформление группы fci
+    font_fci = Font(
+        name=doc_font_name,
+        size=16,
+        bold=True,
+    )
+
+    alignment_fci = Alignment(
+        horizontal='center',
+        # vertical='bottom',
+        # text_rotation=0,
+        # wrap_text=False,
+        # shrink_to_fit=False,
+        # indent=0
+    )
+
+    # Оформление породы
+    font_breed = Font(
+        name=doc_font_name,
+        size=doc_font_size,
+        bold=True,
+    )
+
+    alignment_breed = Alignment(
+        horizontal='center',
+        wrap_text=True,
+        vertical='top',
+        # vertical='bottom',
+        # text_rotation=0,
+        # wrap_text=False,
+        # shrink_to_fit=False,
+        # indent=0
+    )
+
+    # Оформление пола
+    font_sex = Font(
+        name=doc_font_name,
+        size=doc_font_size,
+        bold=True,
+        italic=True,
+    )
+
+    # Оформление класса
+    font_class = Font(
+        name=doc_font_name,
+        size=doc_font_size,
+        bold=True,
+        underline='single',
+    )
+
+    # Оформление записи собаки
+    font_dogie = Font(        
+        name=doc_font_name,
+        size=doc_font_size,
+    )
+    
+    alignment_dogie = Alignment(
+        wrap_text=True,
+        vertical='top',
+    )
+
+
+    # print("events_catalogs_checkbox")
 
     for event in events.values():
 
@@ -111,6 +183,8 @@ def create_events_catalogs(events, temp_path, project_name):
         wb = Workbook()
         # Делаем единственный лист активным
         ws = wb.active
+
+        ws.column_dimensions['A'].width = doc_width
 
         # Путь сохранения нового каталога
         save_path = temp_path + '/'
@@ -130,7 +204,6 @@ def create_events_catalogs(events, temp_path, project_name):
         current_sex = ''
         current_class = ''
         current_line = 1
-        # d = ws.cell(row=1, column=1, value=current_fci)
 
         for i in range(len(dogs_list)):
             fci = dogs_list[i]['fci']
@@ -142,14 +215,14 @@ def create_events_catalogs(events, temp_path, project_name):
             class_obj = DogClass.objects.filter(id=parts_object.class_id).first()
             
             if fci != current_fci:
-                # print(fci)
-                # d = ws.cell(row=1, column=1, value=current_fci)
                 current_line += 1
                 current_fci = fci
                 value = str(current_fci) + ' ГРУППА F.C.I.'
                 cell = 'A' + str(current_line)
                 current_line += 2
                 ws[cell] = value
+                ws[cell].font = font_fci
+                ws[cell].alignment = alignment_fci
 
             name_ru = breed_obj.name_ru
             country_ru = breed_obj.country_ru
@@ -158,31 +231,34 @@ def create_events_catalogs(events, temp_path, project_name):
             breed_str = '{} ({}) \ {} ({})'.format(name_ru, country_ru, name_en, country_en)
 
             if breed_str != current_breed:
-                current_line += 1
                 current_breed = breed_str
                 cell = 'A' + str(current_line)
-                current_line += 2
+                
                 ws[cell] = current_breed
+                ws[cell].font = font_breed
+                ws[cell].alignment = alignment_breed
+                ws.row_dimensions[current_line].auto_size = True
+                current_line += 2
 
             sex_str = 'СУКИ \ FEMALES'
             if dog_obj.is_male == True:
                 sex_str = 'КОБЕЛИ \ MALES'
 
             if sex_str != current_sex:
-                current_line += 1
                 current_sex = sex_str
                 cell = 'A' + str(current_line)
                 current_line += 2
                 ws[cell] = current_sex
+                ws[cell].font = font_sex
 
             class_str = 'Класс: {} \ {} class'.format(class_obj.name_ru, class_obj.name_en.capitalize())
 
             if class_str != current_class:
-                current_line += 1
                 current_class = class_str
                 cell = 'A' + str(current_line)
                 current_line += 2
                 ws[cell] = current_class
+                ws[cell].font = font_class
 
             dogie_str = ''
             dogie_str += str(dogs_list[i]['npp']) + '. '
@@ -216,14 +292,10 @@ def create_events_catalogs(events, temp_path, project_name):
 
 
             cell = 'A' + str(current_line)
-            current_line += 1
+            current_line += 2
             ws[cell] = dogie_str
-
-            
-
-
-            # print(dogs_list[i])
-            # break
+            ws[cell].font = font_dogie
+            ws[cell].alignment = alignment_dogie
 
 
         
