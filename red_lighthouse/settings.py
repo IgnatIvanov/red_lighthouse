@@ -25,8 +25,12 @@ SECRET_KEY = 'django-insecure-5=v#*b&%38^k!s)43m3yyvq!dzawucz0+k*4lxh*gd1()6jb4)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
-# ALLOWED_HOSTS = ['192.168.100.83', '127.0.0.1', '192.168.100.162']
+# ALLOWED_HOSTS = ['*']
+
+if DEBUG:
+    ALLOWED_HOSTS = ['192.168.100.83', '127.0.0.1', '192.168.100.162']
+else:
+    ALLOWED_HOSTS = ['red-lighthouse.ru', 'www.red-lighthouse.ru']
 
 
 # Application definition
@@ -125,6 +129,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = 'static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
