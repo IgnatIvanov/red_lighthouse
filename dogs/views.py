@@ -38,7 +38,7 @@ def dogs_update(request, dog_id):
             return redirect('dogs_main')
         
     
-    dogs = Dog.objects.order_by('id')
+    dogs = Dog.objects.order_by('-id')
     current_dog = Dog.objects.filter(id=dog_id).first()
     
     breed = Breed.objects.filter(id=current_dog.breed_id).first()
@@ -49,7 +49,7 @@ def dogs_update(request, dog_id):
     breed_ru_names = []
     for el in breeds:
         breed_ru_names.append(el.name_ru)
-    del breeds
+    del breeds  
 
     data = {
         'dogs': dogs,
@@ -113,7 +113,7 @@ def dogs_main(request):
         breed_ru_names.append(el.name_ru)
 
     del breeds
-    dogs = Dog.objects.order_by('id')
+    dogs = Dog.objects.order_by('-id')
 
     data = {
         'dogs': dogs,

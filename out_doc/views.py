@@ -104,9 +104,8 @@ def print_temp_sertif(events, temp_path, project_name):
 
 
 
+# Создание каталогов для каждого события отдельно
 def create_events_catalogs(events, temp_path, project_name):
-    # Создание каталогов для каждого события отдельно
-
 
     # Оформление документа
     doc_font_name = 'Times New Roman'
@@ -297,11 +296,57 @@ def create_events_catalogs(events, temp_path, project_name):
             ws[cell].font = font_dogie
             ws[cell].alignment = alignment_dogie
 
-
         
         wb.save(save_path)
         del wb
+
+
+
+# Создание отчётов на каждое событие
+def create_events_reports(events, temp_path, project_name):
+    
+    print('Создание отчётов')
+
+    for event in events.values():
+
+        # Путь сохранения нового отчёта
+        save_path = temp_path + '/'
+        save_path += project_name + '/'
         
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)  # Создание пути сохранения файла
+
+        save_path += 'Отчёт ' + event['rank'] + ' ' + event['comment'] + '.xlsx'
+
+        # Создание чистого Excel документа
+        wb = Workbook()
+
+        # Делаем единственный лист активным
+        ws = wb.active
+
+        # Вставка заголовка отчёта
+        ws['B2'] = 'ИТОГОВЫЙ ОТЧЕТ'
+
+        ws['B4'] = 'Название кинологической организации'
+        ws['E4'] = 'МЕЖРЕГИОНАЛЬНАЯ ОБЩЕСТВЕННАЯ ОРГАНИЗАЦИЯ КЛУБ ПЛЕМЕННОГО СОБАКОВОДСТВА "КРАСНЫЙ МАЯК"'
+
+        ws['B5'] = 'Название выставки'
+        ws['E5'] = 'СЕРТИФИКАТНАЯ ВЫСТАВКА "КРАСНЫЙ МАЯК"'
+
+        ws['B6'] = 'Дата проведения'
+        event_date = event['date']
+        ws['E6'] = str(event_date)
+
+        ws['B7'] = 'Город'
+        ws['E7'] = 'МОСКВА'
+
+        ws['B8'] = 'Ранг выставки'
+        ws['E8'] = event['rank']
+
+
+        # Сохранение текущего отчёта
+        wb.save(save_path)
+        del wb 
 
 
 
@@ -445,11 +490,44 @@ def get_existing_projects():
 
 
 
-def open_project(project_name):
+def open_project(project_path):
 
     # Функция открытия существующего каталога
     
-    project_file = open(project_name)
+
+    # print(project_path)
+    project_name = project_path.replace('projects/', '')[:-5]
+    # print(project_name)
+
+    
+
+
+    project_file = open(project_path)
+    project = json.load(project_file)
+    events_id = project['events_id']
+    project_file.close()
+    # print(events_id)
+
+    
+
+
+    # current_project_name = request.META.get('HTTP_REFERER').split('/')[-1] 
+
+    # Пересборка нового проекта
+    new_project_name = create_project(events_id)
+
+    if new_project_name != project_name:
+
+        # Удаление старого проекта
+        # project_path = 'projects/' + project_path + '.json'
+        if os.path.isfile(project_path):
+            os.remove(project_path)
+
+        # Новый собранный проект называем старым именем
+        rename_project_func(new_project_name, project_name)
+
+
+    project_file = open(project_path)
     project = json.load(project_file)
 
     return project
@@ -466,18 +544,38 @@ def rename_project(request, old_name):
 
             # Предварительно убираем все знаки препинания из нового имени
             # Кроме точек
-            punct = string.punctuation
-            punct = punct.replace('.', '')
-            new_name = request.POST.get("project_new_name")
-            new_name = new_name.translate(str.maketrans('', '', punct))
-            old_path = 'projects/' + old_name + '.json'
-            new_path = 'projects/' + new_name + '.json'
+            # punct = string.punctuation
+            # punct = punct.replace('.', '')
+            # new_name = request.POST.get("project_new_name")
+            # new_name = new_name.translate(str.maketrans('', '', punct))
+            # old_path = 'projects/' + old_name + '.json'
+            # new_path = 'projects/' + new_name + '.json'
 
-            os.rename(old_path, new_path)
+            # os.rename(old_path, new_path)
+
+            new_name = request.POST.get("project_new_name")
+            rename_project_func(old_name, new_name)
+
             return redirect('out_doc_edit_project', project_name = new_name)
             
 
     return redirect('out_doc_edit_project', project_name = old_name)
+
+
+
+def rename_project_func(old_name, new_name):
+
+    # Предварительно убираем все знаки препинания из нового имени
+    # Кроме точек
+    punct = string.punctuation
+    punct = punct.replace('.', '')
+    # new_name = request.POST.get("project_new_name")
+    new_name = new_name.translate(str.maketrans('', '', punct))
+    old_path = 'projects/' + old_name + '.json'
+    new_path = 'projects/' + new_name + '.json'
+
+    os.rename(old_path, new_path)
+    return
 
 
 
@@ -570,13 +668,41 @@ def edit_project(request, project_name):
 
         el_str = str(el)
         events[el_str] = project_file[el_str]
+    
+
+    # Подготовка русских названий пород
+    breeds = Breed.objects.all()
+    breed_ru_names = []
+    for el in breeds:
+        breed_ru_names.append(el.name_ru)
+    del breeds
+
+
+    # Формирование списка классов
+    classes = DogClass.objects.all()
+    classes_names = []
+    for el in classes:
+        dog_class = {}
+        dog_class['id'] = el.id
+        dog_class['name'] = el.name_ru + ' / ' + el.name_en
+        classes_names.append(dog_class)
+
+
+    # Формирование списка клейм собак
+    dogs = Dog.objects.all()
+    dogs_tattoo = []
+    for el in dogs:
+        dogs_tattoo.append(el.tattoo)
 
 
     data = {
         'project_name': project_name,
         'events_id': project_file['events_id'],
         'events_list': events_list,
-        'events': events
+        'events': events,
+        'breed_ru_names': breed_ru_names,
+        'classes_names': classes_names,
+        'dogs_tattoo': dogs_tattoo,
     }
     
 
@@ -664,7 +790,13 @@ def create_project_doc(request, project_name):
 
         # Проверка запроса каталогов на каждое событие в проекте
         if request.POST.get("events_catalogs_checkbox") == 'on':
+            # Создание каталогов на каждое событие
             create_events_catalogs(events, temp_path, project_name)
+
+        # Проверка запроса отчётов на каждое событие в проекте
+        if request.POST.get("events_reports_checkbox") == 'on':
+            # Создание каталогов на каждое событие
+            create_events_reports(events, temp_path, project_name)
 
 
         
@@ -806,4 +938,129 @@ def delete_participant(request, participant_id):
             indent=4
         )
     
+    return redirect(request.META.get('HTTP_REFERER'))
+
+
+
+def project_add_participant(project_name, event_id, dog_data):
+    pass
+
+
+
+def project_add_dog(request):
+    # Добавление одной собаки в несколько событий в одном проекте.
+
+
+    
+
+    current_dog_id = -1
+    
+    current_dog_tattoo = request.POST.get("tattoo")
+    result_set = Dog.objects.filter(tattoo=current_dog_tattoo)
+    # result_set = ['1']
+
+    if len(result_set) == 0:
+        # Действия если собаки нет в базе
+        # Тогда нужно сначала записать собаку в таблицу с собаками
+        # а потом по id собаки зарегистрировать её на событиях
+        dog = Dog()
+
+        breed_name_ru = request.POST.get("breed")
+        breed = Breed.objects.filter(name_ru=breed_name_ru).first()
+        dog.breed_id = breed.id
+
+        dog.rkf = request.POST.get("rkf")
+        dog.region = request.POST.get("region")
+        dog.birth_date = request.POST.get("birth_date")
+        dog.is_male = request.POST.get("sex") == 'male'
+        dog.tattoo = current_dog_tattoo
+        dog.chip = request.POST.get("chip")
+        dog.name_ru = request.POST.get("name_ru")
+        dog.name_en = request.POST.get("name_en")
+        dog.colour_ru = request.POST.get("colour_ru")
+        dog.colour_en = request.POST.get("colour_en")
+        dog.breeder = request.POST.get("breeder")
+        dog.owner = request.POST.get("owner")
+        dog.father_tattoo = request.POST.get("father_tattoo")
+        dog.mother_tattoo = request.POST.get("mother_tattoo")
+        dog.save()
+
+        current_dog_id = Dog.objects.filter(tattoo=current_dog_tattoo).first().id
+
+    else:
+        current_dog_tattoo = request.POST.get("tattoo")
+        current_dog_id = Dog.objects.filter(tattoo=current_dog_tattoo).first().id
+
+
+    # for event_id in selected_events_id:
+
+    #     # Создание новой записи об участии
+    #     participant = Participant()
+    #     participant.event_id = event_id
+
+    # Получение списка событий
+    events_list = get_events_list()
+    events_id = []
+
+    # selected_events_id = []
+    for el in events_list:
+        
+        class_field = 'event ' + str(el['id']) + ' class'        
+        current_class = request.POST.get(class_field)        
+        
+        # current_class = str(current_class).split(' ')[0]
+
+        if current_class != None:
+
+            events_id.append(el['id'])
+            
+            if current_class != '':
+
+                current_class = current_class.split()[0]
+                # selected_events_id.append(el['id'])
+                print(class_field)
+                print(current_class)
+                # print({
+                #     current_dog_id,
+                #     el['id'],
+
+                # })
+                participant = Participant()
+
+                participant.dog_id = current_dog_id
+                participant.event_id = el['id']
+
+                current_class_id = DogClass.objects.filter(name_ru=current_class).first().id
+                participant.class_id = current_class_id
+                participant.is_pay = False
+                
+                for cl in DogClass.objects.all():
+                    print(cl.name_ru, cl.name_en)
+
+                print(
+                    participant.dog_id,
+                    participant.event_id,
+                    participant.class_id,
+                    participant.is_pay,
+                    sep='\n',
+                )
+
+                participant.save()
+
+
+    current_project_name = request.META.get('HTTP_REFERER').split('/')[-1] 
+
+    # Пересборка нового проекта
+    new_project_name = create_project(events_id)
+
+    # Удаление старого проекта
+    project_path = 'projects/' + current_project_name + '.json'
+    if os.path.isfile(project_path):
+        os.remove(project_path)
+
+    # Новый собранный проект называем старым именем
+    rename_project_func(new_project_name, current_project_name)
+
+                
+
     return redirect(request.META.get('HTTP_REFERER'))

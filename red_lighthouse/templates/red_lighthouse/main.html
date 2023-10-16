@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <h1>Главное меню</h1>
+
+    <form role="form" action="/requestFine" autocomplete="off" method="GET" id="MainMenuForm">
+        {% csrf_token %}
+        <button 
+        formaction="{% url 'events_main' %}">
+            Добавить новое событие
+        </button> <br> <br>
+        
+        <button
+        formaction="{% url 'out_doc_select_project' %}">
+            Подготовка проектов документов
+        </button>
+    </form>
+    
+</body>
+
+

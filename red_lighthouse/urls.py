@@ -19,14 +19,16 @@ from django.urls import path, include
 from breed import views as breed_views
 from out_doc import views as out_doc_views
 from landing import views as landing_views
+from red_lighthouse import views as main_views
 
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('', breed_views.breed_home, name='breed_home'),
+    path('', main_views.menu, name='main_menu'),
+    # path('breeds/', breed_views.breed_home, name='breed_home'),
     # path('', out_doc_views.main, name='breed_home'),
-    path('', include('out_doc.urls')),
+    path('docs/', include('out_doc.urls')),
     path('dogs/', include('dogs.urls')),
     path('events/', include('event.urls')),
     path('participant/', include('participant.urls')),

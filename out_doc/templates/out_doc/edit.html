@@ -24,9 +24,61 @@
                 document.getElementById(accordion_id).checked = true;
             };
         };
+
+        function tattooCheck(e) {
+            // Функция проверки введённой собаки по клейму на наличие в БД
+
+            tattoo_field_id = 'tattoo_input';
+            tattoo = document.getElementById(tattoo_field_id).value;
+            tattoo = tattoo.toUpperCase();
+            dogs_tattoo = document.getElementById('dogs_tattoo');
+            is_exist = false;
+
+            // Поиск введённого клейма в списке клейм из БД
+            for (i in dogs_tattoo.options) {                
+                
+                tattoo_value = dogs_tattoo.options[i].value;
+                if (tattoo_value == undefined) continue;
+                tattoo_value = tattoo_value.toUpperCase();
+                if (tattoo_value == tattoo) {
+                    is_exist = true;
+                    break;
+                };
+            };
+
+            if (is_exist) {
+                // Действия, если собака есть в базе
+                document.getElementById(tattoo_field_id).style.backgroundColor = '#5F7B55';
+            } else {
+                // Действия, если собаки нет в базе
+                document.getElementById(tattoo_field_id).style.backgroundColor = 'white';
+                document.getElementById("breed_input").value = "";
+                document.getElementById("rkf_input").value = "";
+                document.getElementById("region_input").value = "";
+                document.getElementById("birth_date_input").value = "";
+                document.getElementById("is_male_input").checked = false;
+                document.getElementById("is_female_input").checked = false;
+                document.getElementById("chip_input").value = "";
+                document.getElementById("name_ru_input").value = "";
+                document.getElementById("name_en_input").value = "";
+                document.getElementById("colour_ru_input").value = "";
+                document.getElementById("colour_en_input").value = "";
+                document.getElementById("breeder_input").value = "";
+                document.getElementById("owner_input").value = "";
+                document.getElementById("father_tattoo_input").value = "";
+                document.getElementById("mother_tattoo_input").value = "";
+            };
+        };
     </script>
 </head>
 <body>
+
+
+<datalist id="dogs_tattoo">
+    {% for el in dogs_tattoo %}
+        <option value="{{ el }}"></option>
+    {% endfor %}
+</datalist>
 
 
 
@@ -84,7 +136,169 @@
 </div>
 
 
+<br>
+<h2>Записать собаку на событие</h2>
+<form method="post" id="form_project_add_dog">
+    {% csrf_token %}    
 
+    <datalist id="classes">
+        {% for el in classes_names %}
+            <option value="{{ el.name }}"></option>
+        {% endfor %}
+    </datalist>
+
+    <!-- Поля ввода данных собаки -->
+    <input type="text" 
+        id="tattoo_input" 
+        name="tattoo" 
+        placeholder="Клеймо" 
+        value=""
+        oninput="tattooCheck()"> <br>
+
+    <input list="breeds" 
+        id="breed_input" 
+        type="text" 
+        name="breed" 
+        placeholder="Порода" 
+        value=""> <br>
+
+    <input type="text" 
+        id="rkf_input" 
+        name="rkf" 
+        placeholder="РКФ" 
+        value=""> <br>
+
+    <input type="text" 
+        id="region_input" 
+        name="region" 
+        placeholder="Регион" 
+        value=""> <br>
+
+    <input type="date" 
+        id="birth_date_input" 
+        name="birth_date"
+        value=""> <br>
+    
+    <input type="radio" 
+        id="is_male_input" 
+        name="sex" 
+        value="male" checked>
+    <label for="male">Кобель</label> <br>
+
+    <input type="radio" 
+        id="is_female_input" 
+        name="sex" 
+        value="female">
+    <label for="female">Сука</label> <br>
+
+    <input type="text" 
+        id="chip_input" 
+        name="chip" 
+        placeholder="Чип" 
+        value=""> <br>
+
+    <input type="text" 
+        id="name_ru_input" 
+        name="name_ru" 
+        placeholder="Кличка на русском" 
+        value=""> <br>
+
+    <input type="text" 
+        id="name_en_input" 
+        name="name_en" 
+        placeholder="Кличка на английском" 
+        value=""> <br>
+
+    <input type="text" 
+        id="colour_ru_input" 
+        name="colour_ru" 
+        placeholder="Окрас на русском" 
+        value=""> <br>
+
+    <input type="text" 
+        id="colour_en_input" 
+        name="colour_en" 
+        placeholder="Окрас на английском" 
+        value=""> <br>
+
+    <input type="text" 
+        id="breeder_input" 
+        name="breeder" 
+        placeholder="Заводчик" 
+        value=""> <br>
+
+    <input type="text" 
+        id="owner_input" 
+        name="owner" 
+        placeholder="Владелец" 
+        value=""> <br>
+
+    <input type="text" 
+        id="father_tattoo_input" 
+        name="father_tattoo" 
+        placeholder="Отец" 
+        value=""> <br>
+
+    <input type="text" 
+        id="mother_tattoo_input" 
+        name="mother_tattoo" 
+        placeholder="Мать" 
+        value=""> <br>
+
+    <span>{{ error }}</span>
+
+    <!-- Список событий -->
+    <h3>События в проекте</h3>
+    <table>
+        {% if events_list %}
+            <tr>
+                <th>Класс</th>
+                <th>Организатор</th>
+                <th>Тип</th>
+                <th>Ранг</th>
+                <th>Дата</th>
+                <th>Дополнительно</th>
+            </tr>
+            {% for el in events_list %}
+                <tr>
+                    <td>
+                        <input list="classes"
+                        type="text"
+                        id="event {{ el.id }} class"
+                        name="event {{ el.id }} class"
+                        placeholder="Выберите событие">
+                    </td>
+                    <td>{{ el.org }}</td>
+                    <td>{{ el.type }}</td>
+                    <td>{{ el.rank }}</td>
+                    <td>{{ el.date }}</td>
+                    <td>{{ el.comment }}</td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <p>Нет событий в проекте</p>
+        {% endif %}
+    </table>
+
+
+    <button class="btn btn-success"
+        type="submit"
+        name="btn_project_add_dog"
+        value="project_add_dog" 
+        formaction="{% url 'project_add_dog' %}">
+        Добавить
+    </button>
+
+</form>
+
+<datalist id="breeds">
+    {% for el in breed_ru_names %}
+        <option value="{{ el }}"></option>
+    {% endfor %}
+</datalist>
+
+
+<br>
 <h2>Вывод документов</h2>
 <form method="post">
 {% csrf_token %}
@@ -107,6 +321,11 @@
     <label for="events_catalogs_checkbox">Каталоги на каждое событие</label>
 </div>
 
+<div>
+    <input type="checkbox" name="events_reports_checkbox" id="events_reports_checkbox" />
+    <label for="events_reports_checkbox">Отчёты на каждое событие</label>
+</div>
+
 <button 
         class="btn btn-success" 
         type="submit" 
@@ -121,6 +340,7 @@
 
 
 
+<br>
 <h2>Собаки в проекте</h2>
 
 {% for event in events.values %}

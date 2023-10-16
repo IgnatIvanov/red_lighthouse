@@ -26,6 +26,7 @@ SECRET_KEY = 'django-insecure-5=v#*b&%38^k!s)43m3yyvq!dzawucz0+k*4lxh*gd1()6jb4)
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['192.168.100.83', '127.0.0.1', '192.168.100.162']
 
 
 # Application definition
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
     'participant',
     'out_doc',
     'landing',
+    'red_lighthouse',
 ]
 
 MIDDLEWARE = [
