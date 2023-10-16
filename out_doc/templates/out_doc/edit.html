@@ -33,6 +33,8 @@
             tattoo = tattoo.toUpperCase();
             dogs_tattoo = document.getElementById('dogs_tattoo');
             is_exist = false;
+            csrf_token = document.getElementsByName('csrfmiddlewaretoken');
+            console.log(csrf_token);
 
             // Поиск введённого клейма в списке клейм из БД
             for (i in dogs_tattoo.options) {                
@@ -49,8 +51,38 @@
             if (is_exist) {
                 // Действия, если собака есть в базе
                 document.getElementById(tattoo_field_id).style.backgroundColor = '#5F7B55';
+                // let url = "{% url 'get_dog_by_tattoo' %}";
+                // let json_body = {
+                //     "tattoo_upper": tattoo,
+                // };
+
+                // doige = fetch(url, {
+                //     method: 'POST',
+                //     body: JSON.stringify(json_body),
+                // });
+
+                // console.log(dogie)
+                // document.getElementById(tattoo_field_id).style.backgroundColor = 'white';
+                // Скрываем все поля ввода, кроме поля ввода клейма
+                document.getElementById("breed_input").hidden = true;
+                document.getElementById("rkf_input").hidden = true;
+                document.getElementById("region_input").hidden = true;
+                document.getElementById("birth_date_input").hidden = true;
+                document.getElementById("is_male_input").hidden = true;
+                document.getElementById("is_female_input").hidden = true;
+                document.getElementById("chip_input").hidden = true;
+                document.getElementById("name_ru_input").hidden = true;
+                document.getElementById("name_en_input").hidden = true;
+                document.getElementById("colour_ru_input").hidden = true;
+                document.getElementById("colour_en_input").hidden = true;
+                document.getElementById("breeder_input").hidden = true;
+                document.getElementById("owner_input").hidden = true;
+                document.getElementById("father_tattoo_input").hidden = true;
+                document.getElementById("mother_tattoo_input").hidden = true;
             } else {
                 // Действия, если собаки нет в базе
+
+                // Очистка всех полей от значений
                 document.getElementById(tattoo_field_id).style.backgroundColor = 'white';
                 document.getElementById("breed_input").value = "";
                 document.getElementById("rkf_input").value = "";
@@ -67,6 +99,23 @@
                 document.getElementById("owner_input").value = "";
                 document.getElementById("father_tattoo_input").value = "";
                 document.getElementById("mother_tattoo_input").value = "";
+
+                // Показвываем поля                
+                document.getElementById("breed_input").hidden = false;
+                document.getElementById("rkf_input").hidden = false;
+                document.getElementById("region_input").hidden = false;
+                document.getElementById("birth_date_input").hidden = false;
+                document.getElementById("is_male_input").hidden = false;
+                document.getElementById("is_female_input").hidden = false;
+                document.getElementById("chip_input").hidden = false;
+                document.getElementById("name_ru_input").hidden = false;
+                document.getElementById("name_en_input").hidden = false;
+                document.getElementById("colour_ru_input").hidden = false;
+                document.getElementById("colour_en_input").hidden = false;
+                document.getElementById("breeder_input").hidden = false;
+                document.getElementById("owner_input").hidden = false;
+                document.getElementById("father_tattoo_input").hidden = false;
+                document.getElementById("mother_tattoo_input").hidden = false;
             };
         };
     </script>

@@ -950,7 +950,6 @@ def project_add_participant(project_name, event_id, dog_data):
 def project_add_dog(request):
     # Добавление одной собаки в несколько событий в одном проекте.
 
-
     
 
     current_dog_id = -1
@@ -1064,3 +1063,10 @@ def project_add_dog(request):
                 
 
     return redirect(request.META.get('HTTP_REFERER'))
+
+
+
+def get_dog_by_tattoo(request):
+    return {
+        'status': 'success',
+    }
