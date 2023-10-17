@@ -8,6 +8,7 @@
         function declineRename() {
             document.getElementById('RenameForm').reset();
             document.getElementById('toggle1').checked = false;
+            document.getElementById('manage1').checked = false;
         }; 
         
         function declineDelete() {
@@ -16,6 +17,7 @@
 
         function closeIfOpen(accordion_id) {
             // alert(accordion_id);
+            document.getElementById('RenameForm').reset();
             current_state = document.getElementById(accordion_id).checked;
             if (current_state) {
                 document.getElementById(accordion_id).checked = false;
@@ -142,9 +144,9 @@
 </form>
 
 <h2>Управление проектом</h2>
-<div class="accordion" onclick="closeIfOpen('manage1')">
+<div class="accordion" >
     <input id="manage1" type="radio" class="accordion-toggle" name="toggle" />
-    <label>Переименовать проект</label>
+    <label onclick="closeIfOpen('manage1')">Переименовать проект</label>
     <section>
     <div>
         Введите новое название проекта
@@ -162,7 +164,7 @@
                 Ввод
             </button>
         </form>
-        <button form="no_form" onclick="declineRename()">Отмена</button>
+        <button form="no_form" onclick="closeIfOpen('manage1')">Отмена</button>
     </div>
     </section>
 </div>
@@ -250,13 +252,15 @@
         id="name_ru_input" 
         name="name_ru" 
         placeholder="Кличка на русском" 
-        value=""> <br>
+        value=""
+        autocomplete="off"> <br>
 
     <input type="text" 
         id="name_en_input" 
         name="name_en" 
         placeholder="Кличка на английском" 
-        value=""> <br>
+        value=""
+        autocomplete="off"> <br>
 
     <input type="text" 
         id="colour_ru_input" 
@@ -350,40 +354,40 @@
 <br>
 <h2>Вывод документов</h2>
 <form method="post">
-{% csrf_token %}
-<!-- <button 
-        class="btn btn-success" 
-        type="submit" 
-        name="btn" 
-        value="print_temp_sertif" 
-        formaction="{% url 'out_doc_edit_project' project_name %}">
-        Временные сертификаты
-</button> -->
+    {% csrf_token %}
+    <!-- <button 
+            class="btn btn-success" 
+            type="submit" 
+            name="btn" 
+            value="print_temp_sertif" 
+            formaction="{% url 'out_doc_edit_project' project_name %}">
+            Временные сертификаты
+    </button> -->
 
-<div>
-    <input type="checkbox" name="temp_sertif_checkbox" id="temp_sertif_checkbox" />
-    <label for="temp_sertif_checkbox">Временные сертификаты (тестирование)</label>
-</div>
+    <div>
+        <input type="checkbox" name="temp_sertif_checkbox" id="temp_sertif_checkbox" />
+        <label for="temp_sertif_checkbox">Временные сертификаты (тестирование)</label>
+    </div>
 
-<div>
-    <input type="checkbox" name="events_catalogs_checkbox" id="events_catalogs_checkbox" />
-    <label for="events_catalogs_checkbox">Каталоги на каждое событие</label>
-</div>
+    <div>
+        <input type="checkbox" name="events_catalogs_checkbox" id="events_catalogs_checkbox" />
+        <label for="events_catalogs_checkbox">Каталоги на каждое событие</label>
+    </div>
 
-<div>
-    <input type="checkbox" name="events_reports_checkbox" id="events_reports_checkbox" />
-    <label for="events_reports_checkbox">Отчёты на каждое событие</label>
-</div>
+    <div>
+        <input type="checkbox" name="events_reports_checkbox" id="events_reports_checkbox" />
+        <label for="events_reports_checkbox">Отчёты на каждое событие</label>
+    </div>
 
-<button 
-        class="btn btn-success" 
-        type="submit" 
-        name="create_doc_btn" 
-        formaction="{% url 'create_project_doc' project_name %}">
-        Создать документы
-</button>
+    <button 
+            class="btn btn-success" 
+            type="submit" 
+            name="create_doc_btn" 
+            formaction="{% url 'create_project_doc' project_name %}">
+            Создать документы
+    </button>
 
-{% if events_list %} {{ temp_sertif_message }} {% endif %}
+    {% if events_list %} {{ temp_sertif_message }} {% endif %}
 
 </form>
 

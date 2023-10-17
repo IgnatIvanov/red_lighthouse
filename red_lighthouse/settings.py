@@ -27,10 +27,16 @@ DEBUG = True
 
 # ALLOWED_HOSTS = ['*']
 
-if DEBUG:
-    ALLOWED_HOSTS = ['192.168.100.83', '127.0.0.1', '192.168.100.162']
-else:
-    ALLOWED_HOSTS = ['red-lighthouse.ru', 'www.red-lighthouse.ru']
+# if DEBUG:
+#     ALLOWED_HOSTS = ['192.168.100.83', '127.0.0.1', '192.168.100.162']
+# else:
+ALLOWED_HOSTS = [
+    'red-lighthouse.ru',
+    'www.red-lighthouse.ru',
+    '127.0.0.1',
+    '192.168.100.83',
+    '192.168.100.162'
+]
 
 
 # Application definition

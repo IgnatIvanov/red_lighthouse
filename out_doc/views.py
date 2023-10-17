@@ -17,11 +17,15 @@ from openpyxl import Workbook
 from openpyxl.styles import Font
 from openpyxl.styles import Alignment
 import datetime as dt
+from pathlib import Path
 
 
 
-templates_path = 'out_doc/templates/out_doc/'
-save_dir = 'документы/'
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+templates_path = BASE_DIR / 'out_doc/templates/out_doc/'
+save_dir = BASE_DIR / 'saved_documents/'
 
 
 
@@ -30,17 +34,21 @@ def print_temp_sertif(events, temp_path, project_name):
 
     # Загрузка документа
     template_name = 'временный сертификат.docx'
-    template_file = templates_path + template_name
+    template_file = templates_path / template_name
 
     for event in events.values():
 
         # Путь сохранения изменённого документа
-        save_path = temp_path + '/'
-        save_path += project_name + '/'
-        save_path += 'Тестирование ' + event['rank'] + ' ' + event['comment'] + '/'
+        # save_path = temp_path + '/'
+        # save_path += project_name + '/'
+        # save_path += 'Тестирование ' + event['rank'] + ' ' + event['comment'] + '/'
+
+        save_path = temp_path / project_name / ('Тестирование ' + event['rank'] + ' ' + event['comment'] + '/')
+
+        # print('save_path', save_path)
     
-        if not os.path.exists(save_path):
-            os.makedirs(save_path)  # Создание пути сохранения файла
+        if not os.path.exists(BASE_DIR / save_path):
+            os.makedirs(BASE_DIR / save_path)  # Создание пути сохранения файла
 
         dogs_list = event['participants_data']
         for i in range(len(dogs_list)):
@@ -64,7 +72,7 @@ def print_temp_sertif(events, temp_path, project_name):
             doc.render(context)
 
             # Сохранение документа
-            save_file = save_path + dogs_list[i]['tattoo'] + '.docx'
+            save_file = save_path / (dogs_list[i]['tattoo'] + '.docx')
             doc.save(save_file)
 
         # print(save_path)
@@ -186,13 +194,14 @@ def create_events_catalogs(events, temp_path, project_name):
         ws.column_dimensions['A'].width = doc_width
 
         # Путь сохранения нового каталога
-        save_path = temp_path + '/'
-        save_path += project_name + '/'
+        # save_path = temp_path + '/'
+        # save_path += project_name + '/'
+        save_path = temp_path / project_name
         
         if not os.path.exists(save_path):
             os.makedirs(save_path)  # Создание пути сохранения файла
 
-        save_path += 'Каталог ' + event['rank'] + ' ' + event['comment'] + '.xlsx'
+        save_path = save_path / ('Каталог ' + event['rank'] + ' ' + event['comment'] + '.xlsx')
 
 
         
@@ -310,13 +319,14 @@ def create_events_reports(events, temp_path, project_name):
     for event in events.values():
 
         # Путь сохранения нового отчёта
-        save_path = temp_path + '/'
-        save_path += project_name + '/'
+        # save_path = temp_path + '/'
+        # save_path += project_name + '/'
+        save_path = temp_path / project_name
         
         if not os.path.exists(save_path):
             os.makedirs(save_path)  # Создание пути сохранения файла
 
-        save_path += 'Отчёт ' + event['rank'] + ' ' + event['comment'] + '.xlsx'
+        save_path = save_path / ('Отчёт ' + event['rank'] + ' ' + event['comment'] + '.xlsx')
 
         # Создание чистого Excel документа
         wb = Workbook()
@@ -398,6 +408,7 @@ def get_events_list(selected_events = []):
 
 
 
+# Получение данных собак-участниц по скиску событий 
 def get_participants_data(selected_events_id):
 
     if type(selected_events_id) != type([]):
@@ -438,7 +449,7 @@ def get_participants_data(selected_events_id):
         dogie['participant_id'] = el.id
 
         dogie['name'] = dog_obj.name_ru
-        if dogie['name'] == '-':
+        if dogie['name'] == '-' or dogie['name'] == '':
             dogie['name'] = dog_obj.name_en
 
         dogie['tattoo'] = dog_obj.tattoo
@@ -476,12 +487,13 @@ def get_participants_data(selected_events_id):
 
 
 
+# Получение списка ранее созданных каталогов
 def get_existing_projects():    
 
     projects = []
 
     # Получение списка ранее созданных каталогов
-    for root, dirs, files in os.walk(".\\projects"):
+    for root, dirs, files in os.walk(BASE_DIR / "projects"):
         for filename in files:
             if filename.endswith('.json'):
                 projects.append(filename.replace('.json', ''))
@@ -490,13 +502,17 @@ def get_existing_projects():
 
 
 
+# Открытие существующего проекта по пути json файла
 def open_project(project_path):
 
-    # Функция открытия существующего каталога
+    # Функция открытия существующего проекта
     
 
     # print(project_path)
-    project_name = project_path.replace('projects/', '')[:-5]
+
+    project_path = BASE_DIR / project_path
+    project_name = str(project_path).split('\\')[-1].replace('.json', '')
+    # print('project_name', project_name)
     # print(project_name)
 
     
@@ -506,6 +522,7 @@ def open_project(project_path):
     project = json.load(project_file)
     events_id = project['events_id']
     project_file.close()
+    # print('project_file', project_file)
     # print(events_id)
 
     
@@ -515,6 +532,7 @@ def open_project(project_path):
 
     # Пересборка нового проекта
     new_project_name = create_project(events_id)
+    new_project_path = BASE_DIR / ('project/' + new_project_name + '.json')
 
     if new_project_name != project_name:
 
@@ -565,16 +583,22 @@ def rename_project(request, old_name):
 
 def rename_project_func(old_name, new_name):
 
+    print(
+        {old_name},
+        {new_name},
+        sep='\n',
+    )
+
     # Предварительно убираем все знаки препинания из нового имени
     # Кроме точек
     punct = string.punctuation
     punct = punct.replace('.', '')
     # new_name = request.POST.get("project_new_name")
     new_name = new_name.translate(str.maketrans('', '', punct))
-    old_path = 'projects/' + old_name + '.json'
-    new_path = 'projects/' + new_name + '.json'
+    old_path = BASE_DIR / ('projects/' + old_name + '.json')
+    new_name = BASE_DIR / ('projects/' + new_name + '.json')
 
-    os.rename(old_path, new_path)
+    os.rename(old_path, new_name)
     return
 
 
@@ -586,7 +610,7 @@ def delete_project(request, project_name):
     print('Delete project request reached')
     print('project_name', project_name)
 
-    project_path = 'projects/' + project_name + '.json'
+    project_path = BASE_DIR / ('projects/' + project_name + '.json')
 
     if os.path.isfile(project_path):
         os.remove(project_path)
@@ -606,11 +630,17 @@ def create_project(events_id):
     hour = now.hour
     minutes = now.minute
     seconds = now.second
-    project_path = 'projects/{}.{}.{}.{}.{}.{}.json'.format(
+
+    project_name = '{}.{}.{}.{}.{}.{}'.format(
         yyyy, mm, dd, hour, minutes, seconds
     )
-    project_name = project_path.replace('.json', '')    
-    project_name = project_name.replace('projects/', '')
+    project_path = 'projects/' + project_name + '.json'
+    project_path = BASE_DIR / project_path
+    # project_path = 'projects/{}.{}.{}.{}.{}.{}.json'.format(
+    #     yyyy, mm, dd, hour, minutes, seconds
+    # )
+    # project_name = project_path.replace('.json', '')    
+    # project_name = project_name.replace('projects/', '')
 
     # dogs = get_participants_data(events_id)
     events_id_str = [str(el) for el in events_id]
@@ -656,7 +686,7 @@ def edit_project(request, project_name):
 
     # Обработчик формы редактирования каталога
     
-    project_path = 'projects/' + project_name + '.json'
+    project_path = BASE_DIR / ('projects/' + project_name + '.json')
     project_file = open_project(project_path)
 
     selected_events = project_file['events_id']
@@ -762,7 +792,7 @@ def create_project_doc(request, project_name):
     if request.method == 'POST':
 
         project_path = 'projects/' + project_name + '.json'
-        project_file = open_project(project_path)
+        project_file = open_project(BASE_DIR / project_path)
 
         selected_events = project_file['events_id']
         # events_list = get_events_list(selected_events)
@@ -774,13 +804,16 @@ def create_project_doc(request, project_name):
             events[el_str] = project_file[el_str]
 
         # Создание временной папки для подготовки документации
-        temp_path = save_dir + str(dt.datetime.now()).replace(':', '.')
+        temp_path = save_dir / str(dt.datetime.now()).replace(':', '.')
 
         # Пути проекта
-        project_path  = temp_path + '/' + project_name
+        # project_path  = temp_path + '/' + project_name
+        project_path  = temp_path / project_name
+        zip_path  = temp_path / (project_name + '.zip')
 
         # Путь сохранения архива с документами проекта
-        zip_path = project_path + '.zip'
+        # zip_path = project_path / '.zip'
+        # print('zip_path', zip_path)
 
 
         # Проверка запроса временных сертификатов тестирования
@@ -812,11 +845,12 @@ def create_project_doc(request, project_name):
         with ZipFile(zip_path, "w") as myzip:
             for i in range(len(real_file_path)):
                 real_file = real_file_path[i]
-                zip_file = real_file.replace(project_path, '')
+                zip_file = real_file.replace(str(project_path), '')
                 myzip.write(real_file, zip_file)
         
         # Отправка созданного архива в ответ
         zip = open(zip_path, 'rb')
+        print('zip_path', zip_path)
         response = FileResponse(zip)
 
         return response
@@ -930,7 +964,7 @@ def delete_participant(request, participant_id):
         project_file[str(event_id)] = event_data
 
 
-    with open(project_path, 'w') as outfile:
+    with open(BASE_DIR / project_path, 'w') as outfile:
         json.dump(
             project_file, 
             outfile, 
@@ -1053,7 +1087,7 @@ def project_add_dog(request):
     new_project_name = create_project(events_id)
 
     # Удаление старого проекта
-    project_path = 'projects/' + current_project_name + '.json'
+    project_path = BASE_DIR / ('projects/' + current_project_name + '.json')
     if os.path.isfile(project_path):
         os.remove(project_path)
 
