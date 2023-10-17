@@ -525,24 +525,54 @@ def open_project(project_path):
     # print('project_file', project_file)
     # print(events_id)
 
+    events_id_str = [str(el) for el in events_id]
+    project = {
+        'events_id': events_id,
+        # 'dogs': dogs
+    }
+    for el in events_id:
+
+        # Сбор данных об участниках
+        project.setdefault(el, {})
+        project[el].setdefault('participants_data', [])
+        project[el]['participants_data'] = get_participants_data(el)
+
+        # Сбор данных о событии
+        event_data = get_events_list(el)[0]
+        project[el]['id'] = el
+        project[el]['org'] = event_data['org']
+        project[el]['type'] = event_data['type']
+        project[el]['rank'] = event_data['rank']
+        project[el]['date'] = event_data['date'].strftime("%d.%m.%Y")
+        project[el]['comment'] = event_data['comment']
+
+
+    with open(project_path, 'w') as outfile:
+        json.dump(
+            project, 
+            outfile, 
+            ensure_ascii=False, 
+            indent=4
+        )
+
     
 
 
     # current_project_name = request.META.get('HTTP_REFERER').split('/')[-1] 
 
     # Пересборка нового проекта
-    new_project_name = create_project(events_id)
-    new_project_path = BASE_DIR / ('project/' + new_project_name + '.json')
+    # new_project_name = create_project(events_id)
+    # new_project_path = BASE_DIR / ('project/' + new_project_name + '.json')
 
-    if new_project_name != project_name:
+    # if new_project_name != project_name:
 
-        # Удаление старого проекта
-        # project_path = 'projects/' + project_path + '.json'
-        if os.path.isfile(project_path):
-            os.remove(project_path)
+    #     # Удаление старого проекта
+    #     # project_path = 'projects/' + project_path + '.json'
+    #     if os.path.isfile(project_path):
+    #         os.remove(project_path)
 
-        # Новый собранный проект называем старым именем
-        rename_project_func(new_project_name, project_name)
+    #     # Новый собранный проект называем старым именем
+    #     rename_project_func(new_project_name, project_name)
 
 
     project_file = open(project_path)
