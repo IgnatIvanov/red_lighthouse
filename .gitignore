@@ -9,3 +9,4 @@
 *.ttf
 
 db.sqlite3
+projects.json

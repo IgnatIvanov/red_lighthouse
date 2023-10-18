@@ -22,15 +22,15 @@
     <label for="toggle1">Выбрать существующий проект</label>
     <section>
     <div>
-        {% if projects %}
-            {% for el in projects %}
+        {% if projects_json %}
+            {% for el in projects_json %}
                 
                 <div>
                     <form method="post">
                         {% csrf_token %}
-                        {{ el }}
+                        {{ el.name }}
                         <button 
-                            formaction="{% url 'out_doc_edit_project' el %}">
+                            formaction="{% url 'out_doc_edit_project' el.id %}">
                             ОТКРЫТЬ
                         </button>
                     </form>

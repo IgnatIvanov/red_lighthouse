@@ -160,7 +160,7 @@
                 name="btn"
                 value="rename_project"
                 form="RenameForm"
-                formaction="{% url 'out_doc_rename_project' project_name %}">
+                formaction="{% url 'out_doc_rename_project' project_id %}">
                 Ввод
             </button>
         </form>
@@ -177,7 +177,7 @@
         <form method="post">
             {% csrf_token %}
             <button 
-                formaction="{% url 'out_doc_delete_project' project_name %}">
+                formaction="{% url 'out_doc_delete_project' project_id %}">
                 Удалить
             </button>
             <button form="no_form" onclick="declineDelete()">Отмена</button>
@@ -355,14 +355,6 @@
 <h2>Вывод документов</h2>
 <form method="post">
     {% csrf_token %}
-    <!-- <button 
-            class="btn btn-success" 
-            type="submit" 
-            name="btn" 
-            value="print_temp_sertif" 
-            formaction="{% url 'out_doc_edit_project' project_name %}">
-            Временные сертификаты
-    </button> -->
 
     <div>
         <input type="checkbox" name="temp_sertif_checkbox" id="temp_sertif_checkbox" />
@@ -383,7 +375,7 @@
             class="btn btn-success" 
             type="submit" 
             name="create_doc_btn" 
-            formaction="{% url 'create_project_doc' project_name %}">
+            formaction="{% url 'create_project_doc' project_id %}">
             Создать документы
     </button>
 
@@ -396,7 +388,7 @@
 <br>
 <h2>Собаки в проекте</h2>
 
-{% for event in events.values %}
+{% for event in events_list %}
 <div class="accordion" onclick="closeIfOpen('event{{ event.id }}')">
     <input id="event{{ event.id }}" type="radio" class="accordion-toggle" name="toggle" />
     <label>
@@ -409,6 +401,7 @@
     <section>
     <div>
         {% if event.participants_data %}
+
 
         <table>
             <tr>

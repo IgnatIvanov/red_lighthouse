@@ -36,16 +36,9 @@ def print_temp_sertif(events, temp_path, project_name):
     template_name = 'временный сертификат.docx'
     template_file = templates_path / template_name
 
-    for event in events.values():
-
-        # Путь сохранения изменённого документа
-        # save_path = temp_path + '/'
-        # save_path += project_name + '/'
-        # save_path += 'Тестирование ' + event['rank'] + ' ' + event['comment'] + '/'
-
+    for event in events:
+        
         save_path = temp_path / project_name / ('Тестирование ' + event['rank'] + ' ' + event['comment'] + '/')
-
-        # print('save_path', save_path)
     
         if not os.path.exists(BASE_DIR / save_path):
             os.makedirs(BASE_DIR / save_path)  # Создание пути сохранения файла
@@ -75,40 +68,7 @@ def print_temp_sertif(events, temp_path, project_name):
             save_file = save_path / (dogs_list[i]['tattoo'] + '.docx')
             doc.save(save_file)
 
-        # print(save_path)
-
     return
-
-    # Путь сохранения изменённого документа
-    # save_path = save_dir
-    # save_path += project_name + '/'
-    # save_path += 'Тестирование/'
-    
-    # os.makedirs(save_path)  # Создание пути сохранения файла
-    
-    # for i in range(len(dogs_list)):
-
-    #     doc = DocxTemplate(template_file)
-
-    #     dogie = dogs_list[i]
-
-    #     sex = '{} \ {}'.format(dogie['sex_ru'], dogie['sex_en'])
-
-    #     # Подстановка данных
-    #     context = {
-    #         'name': dogie['name'],
-    #         'sex': sex,
-    #         'tattoo': dogie['tattoo'],
-    #         'rkf': dogie['rkf'],
-    #         'birth': dogie['birth_date'],
-    #         'owner': dogie['owner'],
-    #         'breed': dogie['breed']
-    #     }
-    #     doc.render(context)
-
-    #     # Сохранение документа
-    #     save_file = save_path + dogs_list[i]['tattoo'] + '.docx'
-    #     doc.save(save_file)
 
 
 
@@ -182,9 +142,8 @@ def create_events_catalogs(events, temp_path, project_name):
     )
 
 
-    # print("events_catalogs_checkbox")
 
-    for event in events.values():
+    for event in events:
 
         # Создание чистого Excel документа
         wb = Workbook()
@@ -194,8 +153,6 @@ def create_events_catalogs(events, temp_path, project_name):
         ws.column_dimensions['A'].width = doc_width
 
         # Путь сохранения нового каталога
-        # save_path = temp_path + '/'
-        # save_path += project_name + '/'
         save_path = temp_path / project_name
         
         if not os.path.exists(save_path):
@@ -316,11 +273,9 @@ def create_events_reports(events, temp_path, project_name):
     
     print('Создание отчётов')
 
-    for event in events.values():
+    for event in events:
 
         # Путь сохранения нового отчёта
-        # save_path = temp_path + '/'
-        # save_path += project_name + '/'
         save_path = temp_path / project_name
         
         if not os.path.exists(save_path):
@@ -487,49 +442,180 @@ def get_participants_data(selected_events_id):
 
 
 
-# Получение списка ранее созданных каталогов
-def get_existing_projects():    
+# Получение списка ранее созданных проектов
+def get_existing_projects():
 
-    projects = []
-
-    # Получение списка ранее созданных каталогов
-    for root, dirs, files in os.walk(BASE_DIR / "projects"):
-        for filename in files:
-            if filename.endswith('.json'):
-                projects.append(filename.replace('.json', ''))
+    json_path = BASE_DIR / 'projects.json'
+    
+    # Загрузка записей о проектах
+    json_path = BASE_DIR / 'projects.json'
+    with open(json_path, 'r', encoding='utf8') as projects_file:
+        projects = json.load(projects_file)
 
     return projects
 
 
 
 # Открытие существующего проекта по пути json файла
-def open_project(project_path):
-
-    # Функция открытия существующего проекта
-    
-
-    # print(project_path)
-
-    project_path = BASE_DIR / project_path
-    project_name = str(project_path).split('\\')[-1].replace('.json', '')
-    # print('project_name', project_name)
-    # print(project_name)
+# def open_project(project_path):  # TODO
 
     
+#     # Загрузка записей о проектах
+#     json_path = BASE_DIR / 'projects.json'
+#     with open(json_path, 'r', encoding='utf8') as projects_file:
+#         projects = json.load(projects_file)    
 
 
-    project_file = open(project_path)
-    project = json.load(project_file)
-    events_id = project['events_id']
-    project_file.close()
-    # print('project_file', project_file)
-    # print(events_id)
+#     project_file = open(project_path)
+#     project = json.load(project_file)
+#     events_id = project['events_id']
+#     project_file.close()
 
-    events_id_str = [str(el) for el in events_id]
+#     events_id_str = [str(el) for el in events_id]
+#     project = {
+#         'events_id': events_id,
+#     }
+#     for el in events_id:
+
+#         # Сбор данных об участниках
+#         project.setdefault(el, {})
+#         project[el].setdefault('participants_data', [])
+#         project[el]['participants_data'] = get_participants_data(el)
+
+#         # Сбор данных о событии
+#         event_data = get_events_list(el)[0]
+#         project[el]['id'] = el
+#         project[el]['org'] = event_data['org']
+#         project[el]['type'] = event_data['type']
+#         project[el]['rank'] = event_data['rank']
+#         project[el]['date'] = event_data['date'].strftime("%d.%m.%Y")
+#         project[el]['comment'] = event_data['comment']
+
+
+#     with open(project_path, 'w') as outfile:
+#         json.dump(
+#             project, 
+#             outfile, 
+#             ensure_ascii=False, 
+#             indent=4
+#         )
+
+
+#     project_file = open(project_path)
+#     project = json.load(project_file)
+
+#     return project
+
+
+
+def rename_project(request, project_id):    
+    # Запрос переименования проекта
+
+    if request.method == 'POST':
+
+        button = request.POST.get("btn")
+
+        if button == 'rename_project':
+
+            new_name = request.POST.get("project_new_name")
+            projects = []
+
+            # Загрузка записей о проектах
+            json_path = BASE_DIR / 'projects.json'
+            with open(json_path, 'r', encoding='utf8') as projects_file:
+                projects = json.load(projects_file)
+
+            # Поиск и переименование проекта по id
+            for i in range(len(projects)):
+                pr = projects[i]
+                if pr['id'] == project_id:
+                    projects[i]['name'] = new_name
+                    break
+
+            # Перезапись projects.json
+            with open(json_path, 'w', encoding='utf8') as outfile:
+                json.dump(
+                    projects, 
+                    outfile, 
+                    ensure_ascii=False, 
+                    indent=4
+                )
+
+            # return redirect('out_doc_edit_project', project_id = project_id)
+            
+
+    return redirect('out_doc_edit_project', project_id = project_id)
+
+
+
+# def rename_project_func(old_name, new_name):
+
+#     print(
+#         {old_name},
+#         {new_name},
+#         sep='\n',
+#     )
+
+#     # Предварительно убираем все знаки препинания из нового имени
+#     # Кроме точек
+#     punct = string.punctuation
+#     punct = punct.replace('.', '')
+#     # new_name = request.POST.get("project_new_name")
+#     new_name = new_name.translate(str.maketrans('', '', punct))
+#     old_path = BASE_DIR / ('projects/' + old_name + '.json')
+#     new_name = BASE_DIR / ('projects/' + new_name + '.json')
+
+#     os.rename(old_path, new_name)
+#     return
+
+
+
+def delete_project(request, project_id):    
+    # Запрос удаления проекта
+
+    projects = []
+
+    # Загрузка записей о проектах
+    json_path = BASE_DIR / 'projects.json'
+    with open(json_path, 'r', encoding='utf8') as projects_file:
+        projects = json.load(projects_file)
+
+    # Поиск и удаление проекта по id
+    for i in range(len(projects)):
+        pr = projects[i]
+        if pr['id'] == project_id:
+            del projects[i]
+            break
+
+    # Перезапись projects.json
+    with open(json_path, 'w', encoding='utf8') as outfile:
+        json.dump(
+            projects, 
+            outfile, 
+            ensure_ascii=False, 
+            indent=4
+        )
+
+
+    return redirect('out_doc_select_project')
+
+
+
+def load_project(events_id):
+    # Загрузка проекта из БД
+    # Вход: [int, .., int] список id событий
+    # Выход: 
+    #   {
+            # 'events_id': events_id,  список id событий
+            # event_id : {
+                # 'participants_data': [данные собак участниц]
+            # }
+    #   }
+
     project = {
         'events_id': events_id,
-        # 'dogs': dogs
     }
+
     for el in events_id:
 
         # Сбор данных об участниках
@@ -546,112 +632,13 @@ def open_project(project_path):
         project[el]['date'] = event_data['date'].strftime("%d.%m.%Y")
         project[el]['comment'] = event_data['comment']
 
-
-    with open(project_path, 'w') as outfile:
-        json.dump(
-            project, 
-            outfile, 
-            ensure_ascii=False, 
-            indent=4
-        )
-
-    
-
-
-    # current_project_name = request.META.get('HTTP_REFERER').split('/')[-1] 
-
-    # Пересборка нового проекта
-    # new_project_name = create_project(events_id)
-    # new_project_path = BASE_DIR / ('project/' + new_project_name + '.json')
-
-    # if new_project_name != project_name:
-
-    #     # Удаление старого проекта
-    #     # project_path = 'projects/' + project_path + '.json'
-    #     if os.path.isfile(project_path):
-    #         os.remove(project_path)
-
-    #     # Новый собранный проект называем старым именем
-    #     rename_project_func(new_project_name, project_name)
-
-
-    project_file = open(project_path)
-    project = json.load(project_file)
-
     return project
 
 
 
-def rename_project(request, old_name):
-    
-    # POST запрос переименования проекта
-
-    if request.method == 'POST':
-        button = request.POST.get("btn")
-        if button == 'rename_project':
-
-            # Предварительно убираем все знаки препинания из нового имени
-            # Кроме точек
-            # punct = string.punctuation
-            # punct = punct.replace('.', '')
-            # new_name = request.POST.get("project_new_name")
-            # new_name = new_name.translate(str.maketrans('', '', punct))
-            # old_path = 'projects/' + old_name + '.json'
-            # new_path = 'projects/' + new_name + '.json'
-
-            # os.rename(old_path, new_path)
-
-            new_name = request.POST.get("project_new_name")
-            rename_project_func(old_name, new_name)
-
-            return redirect('out_doc_edit_project', project_name = new_name)
-            
-
-    return redirect('out_doc_edit_project', project_name = old_name)
-
-
-
-def rename_project_func(old_name, new_name):
-
-    print(
-        {old_name},
-        {new_name},
-        sep='\n',
-    )
-
-    # Предварительно убираем все знаки препинания из нового имени
-    # Кроме точек
-    punct = string.punctuation
-    punct = punct.replace('.', '')
-    # new_name = request.POST.get("project_new_name")
-    new_name = new_name.translate(str.maketrans('', '', punct))
-    old_path = BASE_DIR / ('projects/' + old_name + '.json')
-    new_name = BASE_DIR / ('projects/' + new_name + '.json')
-
-    os.rename(old_path, new_name)
-    return
-
-
-
-def delete_project(request, project_name):
-    
-    # Запрос удаления проекта
-
-    print('Delete project request reached')
-    print('project_name', project_name)
-
-    project_path = BASE_DIR / ('projects/' + project_name + '.json')
-
-    if os.path.isfile(project_path):
-        os.remove(project_path)
-
-    return redirect('out_doc_select_project')
-
-
-
 def create_project(events_id):
-
     # Функция создания нового каталога
+
     
     now = dt.datetime.now()
     yyyy = now.year
@@ -661,49 +648,55 @@ def create_project(events_id):
     minutes = now.minute
     seconds = now.second
 
+    json_path = BASE_DIR / 'projects.json'
     project_name = '{}.{}.{}.{}.{}.{}'.format(
         yyyy, mm, dd, hour, minutes, seconds
     )
-    project_path = 'projects/' + project_name + '.json'
-    project_path = BASE_DIR / project_path
-    # project_path = 'projects/{}.{}.{}.{}.{}.{}.json'.format(
-    #     yyyy, mm, dd, hour, minutes, seconds
-    # )
-    # project_name = project_path.replace('.json', '')    
-    # project_name = project_name.replace('projects/', '')
+    projects = []
 
-    # dogs = get_participants_data(events_id)
-    events_id_str = [str(el) for el in events_id]
-    project = {
+
+    # Открытие projects.json
+    with open(json_path, 'r', encoding='utf8') as projects_file:
+        # Загрузка сведений о проектах
+        projects = json.load(projects_file)
+        print(projects)
+        
+        # Создание нового id
+        max_project_id = -1
+        for pr in projects:
+
+            # Если события повторно собираются в проект
+            # то возвращаем id существующего проекта
+            if pr['events_id'] == events_id:
+                return pr['id']
+
+            if pr['id'] > max_project_id:
+                max_project_id = pr['id']
+
+        new_id = max_project_id + 1
+        print('new_id', new_id)
+
+    # Создание нового проекта
+    new_project = {
+        'id': new_id,
+        'name': project_name,
         'events_id': events_id,
-        # 'dogs': dogs
     }
-    for el in events_id:
 
-        # Сбор данных об участниках
-        project.setdefault(el, {})
-        project[el].setdefault('participants_data', [])
-        project[el]['participants_data'] = get_participants_data(el)
+    # Добавление нового проекта в список проектов
+    projects.append(new_project)
+    print('projects after', projects)
 
-        # Сбор данных о событии
-        event_data = get_events_list(el)[0]
-        project[el]['id'] = el
-        project[el]['org'] = event_data['org']
-        project[el]['type'] = event_data['type']
-        project[el]['rank'] = event_data['rank']
-        project[el]['date'] = event_data['date'].strftime("%d.%m.%Y")
-        project[el]['comment'] = event_data['comment']
-
-
-    with open(project_path, 'w') as outfile:
+    # Перезапись projects.json
+    with open(json_path, 'w', encoding='utf8') as outfile:
         json.dump(
-            project, 
+            projects, 
             outfile, 
             ensure_ascii=False, 
             indent=4
         )
 
-    return project_name
+    return new_id
 
 
 
@@ -712,22 +705,36 @@ def create_project(events_id):
 
 
 
-def edit_project(request, project_name):
+def edit_project(request, project_id):
+    # Обработчик формы редактирования проекта
 
-    # Обработчик формы редактирования каталога
-    
-    project_path = BASE_DIR / ('projects/' + project_name + '.json')
-    project_file = open_project(project_path)
+    project_events_id = []
+    project_name = str()
 
-    selected_events = project_file['events_id']
-    events_list = get_events_list(selected_events)
+    # Загрузка записей о проектах
+    json_path = BASE_DIR / 'projects.json'
+    with open(json_path, 'r', encoding='utf8') as projects_file:
+        projects = json.load(projects_file)
+
+    # Поиск информации нужного проекта
+    for project in projects:
+        if project['id'] == project_id:
+            project_events_id = project['events_id']
+            project_name = project['name']
+
+
+    events_list = get_events_list(project_events_id)
     events = {}
+    
+    for el in project_events_id:
+        events[el] = get_participants_data(el)
 
 
-    for el in selected_events:
-
-        el_str = str(el)
-        events[el_str] = project_file[el_str]
+    for i in range(len(events_list)):
+        current_event = events_list[i]
+        current_id = current_event['id']
+        current_event['participants_data'] = get_participants_data(current_id)
+        events_list[i] = current_event
     
 
     # Подготовка русских названий пород
@@ -756,8 +763,9 @@ def edit_project(request, project_name):
 
 
     data = {
+        'project_id': project_id,
         'project_name': project_name,
-        'events_id': project_file['events_id'],
+        'events_id': project_events_id,
         'events_list': events_list,
         'events': events,
         'breed_ru_names': breed_ru_names,
@@ -769,82 +777,48 @@ def edit_project(request, project_name):
     # Удаление старых временных папок
     for root, dirs, files in os.walk(save_dir):
         for dir in dirs:
-            shutil.rmtree(root + '/' + dir)   
-
-
-    # Обработка входящего post запроса
-    # if request.method == 'POST':
-    #     button = request.POST.get("btn")
-    #     if button == 'print_temp_sertif':
-    #         # Нажата кнопка создания временных сертификатов
-
-    #         # Создание временной папки для подготовки документации
-    #         temp_path = save_dir + str(dt.datetime.now()).replace(':', '.')
-
-    #         # Пути проекта
-    #         project_path  = temp_path + '/' + project_name
-
-    #         # Путь сохранения архива с документами проекта
-    #         zip_path = project_path + '.zip'
-
-    #         # Создание временных сертификатов тестирования
-    #         print_temp_sertif(events, temp_path, project_name)
-
-    #         # Обход готовых файлов проекта
-    #         real_file_path = []
-    #         for root, dirs, files in os.walk(project_path):
-    #             for filename in files:
-    #                 real_path = root + '/' + filename
-    #                 real_file_path.append(real_path)
-
-    #         # Запись файлов в архив
-    #         with ZipFile(zip_path, "w") as myzip:
-    #             for i in range(len(real_file_path)):
-    #                 real_file = real_file_path[i]
-    #                 zip_file = real_file.replace(project_path, '')
-    #                 myzip.write(real_file, zip_file)
-            
-    #         # Отправка созданного архива в ответ
-    #         zip = open(zip_path, 'rb')
-    #         response = FileResponse(zip)
-
-    #         return response
+            shutil.rmtree(root + '/' + dir)
             
             
     return render(request, 'out_doc/edit.html', data)
 
 
 
-def create_project_doc(request, project_name):
+def create_project_doc(request, project_id):
     # Запрос создания выбранной документации для проекта
 
     # Обработка входящего post запроса
     if request.method == 'POST':
+        
+        selected_events = []
+        project_name = str()
 
-        project_path = 'projects/' + project_name + '.json'
-        project_file = open_project(BASE_DIR / project_path)
+        
+        # Загрузка записей о проектах
+        # и загрузка id событий выборанного проекта
+        json_path = BASE_DIR / 'projects.json'
+        with open(json_path, 'r', encoding='utf8') as projects_file:
+            projects = json.load(projects_file)
+            for pr in projects:
+                if pr['id'] == project_id:
+                    selected_events = pr['events_id']
+                    project_name = pr['name']
 
-        selected_events = project_file['events_id']
-        # events_list = get_events_list(selected_events)
-        events = {}
+
+        events = get_events_list(selected_events)
 
 
-        for el in selected_events:
-            el_str = str(el)
-            events[el_str] = project_file[el_str]
+        for i in range(len(events)):
+            
+            event_id = events[i]['id']
+            events[i]['participants_data'] = get_participants_data(event_id)
 
         # Создание временной папки для подготовки документации
         temp_path = save_dir / str(dt.datetime.now()).replace(':', '.')
 
         # Пути проекта
-        # project_path  = temp_path + '/' + project_name
         project_path  = temp_path / project_name
         zip_path  = temp_path / (project_name + '.zip')
-
-        # Путь сохранения архива с документами проекта
-        # zip_path = project_path / '.zip'
-        # print('zip_path', zip_path)
-
 
         # Проверка запроса временных сертификатов тестирования
         if request.POST.get("temp_sertif_checkbox") == 'on':
@@ -860,8 +834,6 @@ def create_project_doc(request, project_name):
         if request.POST.get("events_reports_checkbox") == 'on':
             # Создание каталогов на каждое событие
             create_events_reports(events, temp_path, project_name)
-
-
         
         # Подготовка документов к отправке
         # Обход готовых файлов проекта
@@ -891,17 +863,17 @@ def create_project_doc(request, project_name):
 
 
 def select_project(request):
-
     # Обработчик формы выбора каталога
+
 
     error = ''
     events_list = get_events_list()
-    projects = get_existing_projects()
+    projects_json = get_existing_projects()
 
     data = {
         'error': error,
         'events': events_list,
-        'projects': projects
+        'projects_json': projects_json
     }
 
     # ___________________________________________________________
@@ -930,10 +902,10 @@ def select_project(request):
             
             else:
                 # Запуск создания нового каталога            
-                project_name = create_project(selected_events_id)
+                project_id = create_project(selected_events_id)
                 error = selected_events_id
                 data['error'] = error
-                return redirect('out_doc_edit_project', project_name = project_name)
+                return redirect('out_doc_edit_project', project_id = project_id)
 
     else:
         selected_events_id = []
@@ -951,7 +923,6 @@ def main(request):
     # Обработка входящего пост запроса
 
     if request.method == 'POST':
-        # message = 'Выбраны события: '
         selected_events_id = []
         for el in events_list:            
             checkbox = 'event ' + str(el['id'])
@@ -973,54 +944,22 @@ def main(request):
 def delete_participant(request, participant_id):
     # Запрос на удаление заявки на участие собаки на одной выставке
     # Принимает на вход уникальный id участника
-    # Удаляет участника из файла проекта и из таблицы участников в БД
+    # Удаляет участника из таблицы участников в БД
     
     Participant.objects.filter(id=participant_id).delete()
-    
-    project_name = request.META.get('HTTP_REFERER').split('/')[-1]
-
-    project_path = 'projects/' + project_name + '.json'
-    project_file = open_project(project_path)
-
-    selected_events = project_file['events_id']
-    for event_id in selected_events:
-        event_data = project_file[str(event_id)]        
-        participants_data = event_data['participants_data']
-        for i in range(len(participants_data)):
-            if participants_data[i]['participant_id'] == participant_id:
-                participants_data.pop(i)
-
-        event_data['participants_data'] = participants_data
-        project_file[str(event_id)] = event_data
-
-
-    with open(BASE_DIR / project_path, 'w') as outfile:
-        json.dump(
-            project_file, 
-            outfile, 
-            ensure_ascii=False, 
-            indent=4
-        )
     
     return redirect(request.META.get('HTTP_REFERER'))
 
 
 
-def project_add_participant(project_name, event_id, dog_data):
-    pass
-
-
-
 def project_add_dog(request):
     # Добавление одной собаки в несколько событий в одном проекте.
-
     
 
     current_dog_id = -1
     
     current_dog_tattoo = request.POST.get("tattoo")
     result_set = Dog.objects.filter(tattoo=current_dog_tattoo)
-    # result_set = ['1']
 
     if len(result_set) == 0:
         # Действия если собаки нет в базе
@@ -1053,25 +992,16 @@ def project_add_dog(request):
     else:
         current_dog_tattoo = request.POST.get("tattoo")
         current_dog_id = Dog.objects.filter(tattoo=current_dog_tattoo).first().id
-
-
-    # for event_id in selected_events_id:
-
-    #     # Создание новой записи об участии
-    #     participant = Participant()
-    #     participant.event_id = event_id
+        
 
     # Получение списка событий
     events_list = get_events_list()
     events_id = []
 
-    # selected_events_id = []
     for el in events_list:
         
         class_field = 'event ' + str(el['id']) + ' class'        
-        current_class = request.POST.get(class_field)        
-        
-        # current_class = str(current_class).split(' ')[0]
+        current_class = request.POST.get(class_field)
 
         if current_class != None:
 
@@ -1080,14 +1010,6 @@ def project_add_dog(request):
             if current_class != '':
 
                 current_class = current_class.split()[0]
-                # selected_events_id.append(el['id'])
-                print(class_field)
-                print(current_class)
-                # print({
-                #     current_dog_id,
-                #     el['id'],
-
-                # })
                 participant = Participant()
 
                 participant.dog_id = current_dog_id
@@ -1109,21 +1031,6 @@ def project_add_dog(request):
                 )
 
                 participant.save()
-
-
-    current_project_name = request.META.get('HTTP_REFERER').split('/')[-1] 
-
-    # Пересборка нового проекта
-    new_project_name = create_project(events_id)
-
-    # Удаление старого проекта
-    project_path = BASE_DIR / ('projects/' + current_project_name + '.json')
-    if os.path.isfile(project_path):
-        os.remove(project_path)
-
-    # Новый собранный проект называем старым именем
-    rename_project_func(new_project_name, current_project_name)
-
                 
 
     return redirect(request.META.get('HTTP_REFERER'))
