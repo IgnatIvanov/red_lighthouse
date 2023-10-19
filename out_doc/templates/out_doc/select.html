@@ -14,8 +14,25 @@
 
 
 
-<!-- <form method="post">
-{% csrf_token %} -->
+<form role="form" action="/requestFine" autocomplete="off" method="GET" id="MainMenuForm">
+    {% csrf_token %}
+    <br>
+
+    <button 
+    formaction="{% url 'main_menu' %}">
+        Вернуться в главное меню
+    </button>
+
+    <!-- <button 
+    formaction="{% url 'events_main' %}">
+        Добавить новое событие
+    </button> -->
+    
+    <br>
+    <br>
+</form>
+
+
 
 <div class="accordion">
     <input id="toggle1" type="radio" class="accordion-toggle" name="toggle" />

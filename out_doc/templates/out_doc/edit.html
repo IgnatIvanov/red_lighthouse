@@ -137,10 +137,16 @@
 
 <form method="post">
     {% csrf_token %}
+    
+    <button 
+    formaction="{% url 'main_menu' %}">
+        Вернуться в главное меню
+    </button>
     <button 
         formaction="{% url 'out_doc_select_project' %}">
         Вернуться к выбору проекта
     </button>
+    
 </form>
 
 <h2>Управление проектом</h2>

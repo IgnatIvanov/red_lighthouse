@@ -5,19 +5,26 @@
 </head>
 
 <body>
-    <h1>Главное меню</h1>
+    <h2>Главное меню</h2>
 
     <form role="form" action="/requestFine" autocomplete="off" method="GET" id="MainMenuForm">
         {% csrf_token %}
+
         <button 
         formaction="{% url 'events_main' %}">
             Добавить новое событие
+        </button>
+        
+        <button
+        formaction="{% url 'dogs_main' %}">
+            Таблица "Собаки"
         </button> <br> <br>
         
         <button
         formaction="{% url 'out_doc_select_project' %}">
             Подготовка проектов документов
         </button>
+
     </form>
     
 </body>
