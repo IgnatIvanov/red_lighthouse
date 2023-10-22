@@ -839,12 +839,17 @@ def create_project_doc(request, project_id):
         # Проверка запроса отчётов на каждое событие в проекте
         if request.POST.get("events_reports_checkbox") == 'on':
             # Создание каталогов на каждое событие
-            create_events_reports(events, temp_path, project_name)            
+            create_events_reports(events, temp_path, project_name)
 
         # Проверка запроса закрытого списка учатников excel в проекте
         if request.POST.get("events_parts_private_list_checkbox") == 'on':
             # Создание закрытого списка учатников
             create_private_list(events, temp_path, project_name)
+
+        # Проверка запроса открытого списка учатников excel в проекте
+        if request.POST.get("events_parts_open_list_checkbox") == 'on':
+            # Создание открытого списка учатников
+            create_open_list(events, temp_path, project_name)
         
         # Подготовка документов к отправке
         # Обход готовых файлов проекта

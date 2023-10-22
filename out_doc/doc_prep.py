@@ -5,6 +5,7 @@ from openpyxl.styles import Font
 from openpyxl.styles import Alignment
 
 from pathlib import Path
+from docx import Document
 from docxtpl import DocxTemplate
 
 from .models import Dog
@@ -418,3 +419,72 @@ def create_private_list(events, temp_path, project_name):
     wb.save(save_path)
     # print('save_path', save_path)
     del wb
+
+
+
+# Создание открытого списка участников для сверки
+def create_open_list(events, temp_path, project_name):
+
+
+    document = Document()
+    
+    # Сбор строк
+    for event in events:              
+
+        rows = []
+
+        # Сбор данных о событии
+        event_date = event['date']
+        event_field = str()
+        event_field += event['org'] + ', '
+        event_field += event['type'] + ', '
+        event_field += event['rank'] + ', '
+        event_field += toDateStr(event_date.day) + '.' + toDateStr(event_date.month) + '.' + toDateStr(event_date.year) + ', ' 
+        event_field += event['comment']
+
+        # Запись заголовка с названием события
+        p = document.add_paragraph(event_field + '\n')
+
+        # Добавление новой строки в список
+        for dogie in event['participants_data']:
+            # new_row = {}
+            # new_row['event'] = event_field
+            # Добавление данных о породе в абзац
+            breed_data = '{} \ {}'.format(dogie['breed_ru'], dogie['breed_en'])
+            p = document.add_paragraph(breed_data + '; ')
+            # new_row['breed'] = '{} \ {}'.format(dogie['breed_ru'], dogie['breed_en'])
+
+            # Добавление данных о классе в абзац
+            class_data = '{} \ {}'.format(dogie['class_ru'], dogie['class_en'])
+            p.add_run(class_data + '; ')
+            # new_row['class'] = '{} \ {}'.format(dogie['class_ru'], dogie['class_en'])
+
+            # Добавление данных о поле в абзац
+            sex_data = '{} \ {}'.format(dogie['sex_ru'], dogie['sex_en'])
+            p.add_run(sex_data + '; ')
+            # new_row['sex'] = '{} \ {}'.format(dogie['sex_ru'], dogie['sex_en'])
+
+            # Добавление данных о клейме в абзац
+            p.add_run(dogie['tattoo'])
+            # new_row['tattoo'] = dogie['tattoo']
+            # new_row['owner'] = dogie['owner']
+            # rows.append(new_row)
+            # print(new_row, '\n')
+
+        
+        p = document.add_paragraph('\n\n')
+
+    
+        # Сортировка собак по клейму 
+        # rows = sorted(rows, key=lambda x: x['tattoo'])
+        
+    # Путь сохранения нового отчёта
+    save_path = temp_path / project_name
+    
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)  # Создание пути сохранения файла
+
+    save_path = save_path / ('Список открытый для сверки.docx')
+
+    document.save(save_path)
+    del document
