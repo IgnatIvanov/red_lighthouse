@@ -18,6 +18,7 @@ from openpyxl.styles import Font
 from openpyxl.styles import Alignment
 import datetime as dt
 from pathlib import Path
+from .doc_prep import *
 
 
 
@@ -29,289 +30,291 @@ save_dir = BASE_DIR / 'saved_documents/'
 
 
 
-# Функция печати временных сертификатов
-def print_temp_sertif(events, temp_path, project_name):
+# # Функция печати временных сертификатов
+# def print_temp_sertif(events, temp_path, project_name):
 
-    # Загрузка документа
-    template_name = 'временный сертификат.docx'
-    template_file = templates_path / template_name
+#     test_doc_prep()
 
-    for event in events:
+#     # Загрузка документа
+#     template_name = 'временный сертификат.docx'
+#     template_file = templates_path / template_name
+
+#     for event in events:
         
-        save_path = temp_path / project_name / ('Тестирование ' + event['rank'] + ' ' + event['comment'] + '/')
+#         save_path = temp_path / project_name / ('Тестирование ' + event['rank'] + ' ' + event['comment'] + '/')
     
-        if not os.path.exists(BASE_DIR / save_path):
-            os.makedirs(BASE_DIR / save_path)  # Создание пути сохранения файла
+#         if not os.path.exists(BASE_DIR / save_path):
+#             os.makedirs(BASE_DIR / save_path)  # Создание пути сохранения файла
 
-        dogs_list = event['participants_data']
-        for i in range(len(dogs_list)):
+#         dogs_list = event['participants_data']
+#         for i in range(len(dogs_list)):
 
-            doc = DocxTemplate(template_file)
+#             doc = DocxTemplate(template_file)
 
-            dogie = dogs_list[i]
+#             dogie = dogs_list[i]
 
-            sex = '{} \ {}'.format(dogie['sex_ru'], dogie['sex_en'])
+#             sex = '{} \ {}'.format(dogie['sex_ru'], dogie['sex_en'])
 
-            # Подстановка данных
-            context = {
-                'name': dogie['name'],
-                'sex': sex,
-                'tattoo': dogie['tattoo'],
-                'rkf': dogie['rkf'],
-                'birth': dogie['birth_date'],
-                'owner': dogie['owner'],
-                'breed': dogie['breed']
-            }
-            doc.render(context)
+#             # Подстановка данных
+#             context = {
+#                 'name': dogie['name'],
+#                 'sex': sex,
+#                 'tattoo': dogie['tattoo'],
+#                 'rkf': dogie['rkf'],
+#                 'birth': dogie['birth_date'],
+#                 'owner': dogie['owner'],
+#                 'breed': dogie['breed']
+#             }
+#             doc.render(context)
 
-            # Сохранение документа
-            save_file = save_path / (dogs_list[i]['tattoo'] + '.docx')
-            doc.save(save_file)
+#             # Сохранение документа
+#             save_file = save_path / (dogs_list[i]['tattoo'] + '.docx')
+#             doc.save(save_file)
 
-    return
+#     return
 
 
 
-# Создание каталогов для каждого события отдельно
-def create_events_catalogs(events, temp_path, project_name):
+# # Создание каталогов для каждого события отдельно
+# def create_events_catalogs(events, temp_path, project_name):
 
-    # Оформление документа
-    doc_font_name = 'Times New Roman'
-    doc_font_size = 12
-    doc_width = 85
+#     # Оформление документа
+#     doc_font_name = 'Times New Roman'
+#     doc_font_size = 12
+#     doc_width = 85
 
-    # Оформление группы fci
-    font_fci = Font(
-        name=doc_font_name,
-        size=16,
-        bold=True,
-    )
+#     # Оформление группы fci
+#     font_fci = Font(
+#         name=doc_font_name,
+#         size=16,
+#         bold=True,
+#     )
 
-    alignment_fci = Alignment(
-        horizontal='center',
-        # vertical='bottom',
-        # text_rotation=0,
-        # wrap_text=False,
-        # shrink_to_fit=False,
-        # indent=0
-    )
+#     alignment_fci = Alignment(
+#         horizontal='center',
+#         # vertical='bottom',
+#         # text_rotation=0,
+#         # wrap_text=False,
+#         # shrink_to_fit=False,
+#         # indent=0
+#     )
 
-    # Оформление породы
-    font_breed = Font(
-        name=doc_font_name,
-        size=doc_font_size,
-        bold=True,
-    )
+#     # Оформление породы
+#     font_breed = Font(
+#         name=doc_font_name,
+#         size=doc_font_size,
+#         bold=True,
+#     )
 
-    alignment_breed = Alignment(
-        horizontal='center',
-        wrap_text=True,
-        vertical='top',
-        # vertical='bottom',
-        # text_rotation=0,
-        # wrap_text=False,
-        # shrink_to_fit=False,
-        # indent=0
-    )
+#     alignment_breed = Alignment(
+#         horizontal='center',
+#         wrap_text=True,
+#         vertical='top',
+#         # vertical='bottom',
+#         # text_rotation=0,
+#         # wrap_text=False,
+#         # shrink_to_fit=False,
+#         # indent=0
+#     )
 
-    # Оформление пола
-    font_sex = Font(
-        name=doc_font_name,
-        size=doc_font_size,
-        bold=True,
-        italic=True,
-    )
+#     # Оформление пола
+#     font_sex = Font(
+#         name=doc_font_name,
+#         size=doc_font_size,
+#         bold=True,
+#         italic=True,
+#     )
 
-    # Оформление класса
-    font_class = Font(
-        name=doc_font_name,
-        size=doc_font_size,
-        bold=True,
-        underline='single',
-    )
+#     # Оформление класса
+#     font_class = Font(
+#         name=doc_font_name,
+#         size=doc_font_size,
+#         bold=True,
+#         underline='single',
+#     )
 
-    # Оформление записи собаки
-    font_dogie = Font(        
-        name=doc_font_name,
-        size=doc_font_size,
-    )
+#     # Оформление записи собаки
+#     font_dogie = Font(        
+#         name=doc_font_name,
+#         size=doc_font_size,
+#     )
     
-    alignment_dogie = Alignment(
-        wrap_text=True,
-        vertical='top',
-    )
+#     alignment_dogie = Alignment(
+#         wrap_text=True,
+#         vertical='top',
+#     )
 
 
 
-    for event in events:
+#     for event in events:
 
-        # Создание чистого Excel документа
-        wb = Workbook()
-        # Делаем единственный лист активным
-        ws = wb.active
+#         # Создание чистого Excel документа
+#         wb = Workbook()
+#         # Делаем единственный лист активным
+#         ws = wb.active
 
-        ws.column_dimensions['A'].width = doc_width
+#         ws.column_dimensions['A'].width = doc_width
 
-        # Путь сохранения нового каталога
-        save_path = temp_path / project_name
+#         # Путь сохранения нового каталога
+#         save_path = temp_path / project_name
         
-        if not os.path.exists(save_path):
-            os.makedirs(save_path)  # Создание пути сохранения файла
+#         if not os.path.exists(save_path):
+#             os.makedirs(save_path)  # Создание пути сохранения файла
 
-        save_path = save_path / ('Каталог ' + event['rank'] + ' ' + event['comment'] + '.xlsx')
+#         save_path = save_path / ('Каталог ' + event['rank'] + ' ' + event['comment'] + '.xlsx')
 
 
         
-        dogs_list = event['participants_data']
+#         dogs_list = event['participants_data']
 
-        current_fci = ''
-        current_breed = ''
-        current_sex = ''
-        current_class = ''
-        current_line = 1
+#         current_fci = ''
+#         current_breed = ''
+#         current_sex = ''
+#         current_class = ''
+#         current_line = 1
 
-        for i in range(len(dogs_list)):
-            fci = dogs_list[i]['fci']
-            dog_id = dogs_list[i]['dog_id']
-            dog_obj = Dog.objects.filter(id=dog_id).first()
-            participant_id = dogs_list[i]['participant_id']
-            breed_obj = Breed.objects.filter(id=dog_obj.breed_id).first()
-            parts_object = Participant.objects.filter(id=participant_id).first()
-            class_obj = DogClass.objects.filter(id=parts_object.class_id).first()
+#         for i in range(len(dogs_list)):
+#             fci = dogs_list[i]['fci']
+#             dog_id = dogs_list[i]['dog_id']
+#             dog_obj = Dog.objects.filter(id=dog_id).first()
+#             participant_id = dogs_list[i]['participant_id']
+#             breed_obj = Breed.objects.filter(id=dog_obj.breed_id).first()
+#             parts_object = Participant.objects.filter(id=participant_id).first()
+#             class_obj = DogClass.objects.filter(id=parts_object.class_id).first()
             
-            if fci != current_fci:
-                current_line += 1
-                current_fci = fci
-                value = str(current_fci) + ' ГРУППА F.C.I.'
-                cell = 'A' + str(current_line)
-                current_line += 2
-                ws[cell] = value
-                ws[cell].font = font_fci
-                ws[cell].alignment = alignment_fci
+#             if fci != current_fci:
+#                 current_line += 1
+#                 current_fci = fci
+#                 value = str(current_fci) + ' ГРУППА F.C.I.'
+#                 cell = 'A' + str(current_line)
+#                 current_line += 2
+#                 ws[cell] = value
+#                 ws[cell].font = font_fci
+#                 ws[cell].alignment = alignment_fci
 
-            name_ru = breed_obj.name_ru
-            country_ru = breed_obj.country_ru
-            name_en = breed_obj.name_en
-            country_en = breed_obj.country_en
-            breed_str = '{} ({}) \ {} ({})'.format(name_ru, country_ru, name_en, country_en)
+#             name_ru = breed_obj.name_ru
+#             country_ru = breed_obj.country_ru
+#             name_en = breed_obj.name_en
+#             country_en = breed_obj.country_en
+#             breed_str = '{} ({}) \ {} ({})'.format(name_ru, country_ru, name_en, country_en)
 
-            if breed_str != current_breed:
-                current_breed = breed_str
-                cell = 'A' + str(current_line)
+#             if breed_str != current_breed:
+#                 current_breed = breed_str
+#                 cell = 'A' + str(current_line)
                 
-                ws[cell] = current_breed
-                ws[cell].font = font_breed
-                ws[cell].alignment = alignment_breed
-                ws.row_dimensions[current_line].auto_size = True
-                current_line += 2
+#                 ws[cell] = current_breed
+#                 ws[cell].font = font_breed
+#                 ws[cell].alignment = alignment_breed
+#                 ws.row_dimensions[current_line].auto_size = True
+#                 current_line += 2
 
-            sex_str = 'СУКИ \ FEMALES'
-            if dog_obj.is_male == True:
-                sex_str = 'КОБЕЛИ \ MALES'
+#             sex_str = 'СУКИ \ FEMALES'
+#             if dog_obj.is_male == True:
+#                 sex_str = 'КОБЕЛИ \ MALES'
 
-            if sex_str != current_sex:
-                current_sex = sex_str
-                cell = 'A' + str(current_line)
-                current_line += 2
-                ws[cell] = current_sex
-                ws[cell].font = font_sex
+#             if sex_str != current_sex:
+#                 current_sex = sex_str
+#                 cell = 'A' + str(current_line)
+#                 current_line += 2
+#                 ws[cell] = current_sex
+#                 ws[cell].font = font_sex
 
-            class_str = 'Класс: {} \ {} class'.format(class_obj.name_ru, class_obj.name_en.capitalize())
+#             class_str = 'Класс: {} \ {} class'.format(class_obj.name_ru, class_obj.name_en.capitalize())
 
-            if class_str != current_class:
-                current_class = class_str
-                cell = 'A' + str(current_line)
-                current_line += 2
-                ws[cell] = current_class
-                ws[cell].font = font_class
+#             if class_str != current_class:
+#                 current_class = class_str
+#                 cell = 'A' + str(current_line)
+#                 current_line += 2
+#                 ws[cell] = current_class
+#                 ws[cell].font = font_class
 
-            dogie_str = ''
-            dogie_str += str(dogs_list[i]['npp']) + '. '
-            dogie_str += dogs_list[i]['name'] + ', '
-            dogie_str += 'д.р. ' + dogs_list[i]['birth_date'] + ', '
-            dogie_str += dogs_list[i]['tattoo'] + ', '
+#             dogie_str = ''
+#             dogie_str += str(dogs_list[i]['npp']) + '. '
+#             dogie_str += dogs_list[i]['name'] + ', '
+#             dogie_str += 'д.р. ' + dogs_list[i]['birth_date'] + ', '
+#             dogie_str += dogs_list[i]['tattoo'] + ', '
 
-            colour_str = dog_obj.colour_ru
-            if colour_str == '-':
-                colour_str = dog_obj.colour_en
-            dogie_str += colour_str + ', '
+#             colour_str = dog_obj.colour_ru
+#             if colour_str == '-':
+#                 colour_str = dog_obj.colour_en
+#             dogie_str += colour_str + ', '
 
-            # Разобраться с вводом родителей собаки
+#             # Разобраться с вводом родителей собаки
 
-            # father_obj = Dog.objects.filter(tattoo=dog_obj.father_tattoo).first()
-            # mother_obj = Dog.objects.filter(tattoo=dog_obj.mother_tattoo).first()
+#             # father_obj = Dog.objects.filter(tattoo=dog_obj.father_tattoo).first()
+#             # mother_obj = Dog.objects.filter(tattoo=dog_obj.mother_tattoo).first()
 
-            # father_name = father_obj.name_ru
-            # if father_name == '-':
-            #     father_name = father_obj.name_en
+#             # father_name = father_obj.name_ru
+#             # if father_name == '-':
+#             #     father_name = father_obj.name_en
 
-            # mother_name = mother_obj.name_ru
-            # if mother_name == '-':
-            #     mother_name = mother_obj.name_en
+#             # mother_name = mother_obj.name_ru
+#             # if mother_name == '-':
+#             #     mother_name = mother_obj.name_en
 
-            # dogie_str += father_name + 'X' + mother_name + ', '
+#             # dogie_str += father_name + 'X' + mother_name + ', '
 
-            dogie_str += 'зав. ' + dog_obj.breeder + ', '
-            dogie_str += 'вл. ' + dog_obj.owner
+#             dogie_str += 'зав. ' + dog_obj.breeder + ', '
+#             dogie_str += 'вл. ' + dog_obj.owner
 
 
 
-            cell = 'A' + str(current_line)
-            current_line += 2
-            ws[cell] = dogie_str
-            ws[cell].font = font_dogie
-            ws[cell].alignment = alignment_dogie
+#             cell = 'A' + str(current_line)
+#             current_line += 2
+#             ws[cell] = dogie_str
+#             ws[cell].font = font_dogie
+#             ws[cell].alignment = alignment_dogie
 
         
-        wb.save(save_path)
-        del wb
+#         wb.save(save_path)
+#         del wb
 
 
 
-# Создание отчётов на каждое событие
-def create_events_reports(events, temp_path, project_name):
+# # Создание отчётов на каждое событие
+# def create_events_reports(events, temp_path, project_name):
     
-    print('Создание отчётов')
+#     print('Создание отчётов')
 
-    for event in events:
+#     for event in events:
 
-        # Путь сохранения нового отчёта
-        save_path = temp_path / project_name
+#         # Путь сохранения нового отчёта
+#         save_path = temp_path / project_name
         
-        if not os.path.exists(save_path):
-            os.makedirs(save_path)  # Создание пути сохранения файла
+#         if not os.path.exists(save_path):
+#             os.makedirs(save_path)  # Создание пути сохранения файла
 
-        save_path = save_path / ('Отчёт ' + event['rank'] + ' ' + event['comment'] + '.xlsx')
+#         save_path = save_path / ('Отчёт ' + event['rank'] + ' ' + event['comment'] + '.xlsx')
 
-        # Создание чистого Excel документа
-        wb = Workbook()
+#         # Создание чистого Excel документа
+#         wb = Workbook()
 
-        # Делаем единственный лист активным
-        ws = wb.active
+#         # Делаем единственный лист активным
+#         ws = wb.active
 
-        # Вставка заголовка отчёта
-        ws['B2'] = 'ИТОГОВЫЙ ОТЧЕТ'
+#         # Вставка заголовка отчёта
+#         ws['B2'] = 'ИТОГОВЫЙ ОТЧЕТ'
 
-        ws['B4'] = 'Название кинологической организации'
-        ws['E4'] = 'МЕЖРЕГИОНАЛЬНАЯ ОБЩЕСТВЕННАЯ ОРГАНИЗАЦИЯ КЛУБ ПЛЕМЕННОГО СОБАКОВОДСТВА "КРАСНЫЙ МАЯК"'
+#         ws['B4'] = 'Название кинологической организации'
+#         ws['E4'] = 'МЕЖРЕГИОНАЛЬНАЯ ОБЩЕСТВЕННАЯ ОРГАНИЗАЦИЯ КЛУБ ПЛЕМЕННОГО СОБАКОВОДСТВА "КРАСНЫЙ МАЯК"'
 
-        ws['B5'] = 'Название выставки'
-        ws['E5'] = 'СЕРТИФИКАТНАЯ ВЫСТАВКА "КРАСНЫЙ МАЯК"'
+#         ws['B5'] = 'Название выставки'
+#         ws['E5'] = 'СЕРТИФИКАТНАЯ ВЫСТАВКА "КРАСНЫЙ МАЯК"'
 
-        ws['B6'] = 'Дата проведения'
-        event_date = event['date']
-        ws['E6'] = str(event_date)
+#         ws['B6'] = 'Дата проведения'
+#         event_date = event['date']
+#         ws['E6'] = str(event_date)
 
-        ws['B7'] = 'Город'
-        ws['E7'] = 'МОСКВА'
+#         ws['B7'] = 'Город'
+#         ws['E7'] = 'МОСКВА'
 
-        ws['B8'] = 'Ранг выставки'
-        ws['E8'] = event['rank']
+#         ws['B8'] = 'Ранг выставки'
+#         ws['E8'] = event['rank']
 
 
-        # Сохранение текущего отчёта
-        wb.save(save_path)
-        del wb 
+#         # Сохранение текущего отчёта
+#         wb.save(save_path)
+#         del wb 
 
 
 
@@ -815,6 +818,9 @@ def create_project_doc(request, project_id):
 
         # Создание временной папки для подготовки документации
         temp_path = save_dir / str(dt.datetime.now()).replace(':', '.')
+        # Создаём каталог, если его ещё нет
+        if not os.path.exists(temp_path):
+            os.mkdir(temp_path)  # создание каталога
 
         # Пути проекта
         project_path  = temp_path / project_name
@@ -833,7 +839,12 @@ def create_project_doc(request, project_id):
         # Проверка запроса отчётов на каждое событие в проекте
         if request.POST.get("events_reports_checkbox") == 'on':
             # Создание каталогов на каждое событие
-            create_events_reports(events, temp_path, project_name)
+            create_events_reports(events, temp_path, project_name)            
+
+        # Проверка запроса закрытого списка учатников excel в проекте
+        if request.POST.get("events_parts_private_list_checkbox") == 'on':
+            # Создание закрытого списка учатников
+            create_private_list(events, temp_path, project_name)
         
         # Подготовка документов к отправке
         # Обход готовых файлов проекта
@@ -841,7 +852,7 @@ def create_project_doc(request, project_id):
         for root, dirs, files in os.walk(project_path):
             for filename in files:
                 real_path = root + '/' + filename
-                real_file_path.append(real_path)
+                real_file_path.append(real_path)  
 
         # Запись файлов в архив
         with ZipFile(zip_path, "w") as myzip:

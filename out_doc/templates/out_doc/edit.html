@@ -377,6 +377,11 @@
         <label for="events_reports_checkbox">Отчёты на каждое событие</label>
     </div>
 
+    <div>
+        <input type="checkbox" name="events_parts_private_list_checkbox" id="events_parts_private_list_checkbox" />
+        <label for="events_parts_private_list_checkbox">Закрытый список участников (Excel)</label>
+    </div>
+
     <button 
             class="btn btn-success" 
             type="submit" 
@@ -395,9 +400,9 @@
 <h2>Собаки в проекте</h2>
 
 {% for event in events_list %}
-<div class="accordion" onclick="closeIfOpen('event{{ event.id }}')">
+<div class="accordion">
     <input id="event{{ event.id }}" type="radio" class="accordion-toggle" name="toggle" />
-    <label>
+    <label onclick="closeIfOpen('event{{ event.id }}')">
         Орг.: {{ event.org }},
         Тип: {{ event.type }},
         Ранг: {{ event.rank }},
