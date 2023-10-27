@@ -27,6 +27,9 @@ class Dog(models.Model):
     owner = models.TextField('ФИО владельца')
     father_tattoo = models.TextField('Отец')
     mother_tattoo = models.TextField('Мать')
+    father_name = models.TextField('Кличка папы')
+    mother_name = models.TextField('Кличка мамы')
+    short_address = models.TextField('Короткий адрес')
 
     class Meta:
         

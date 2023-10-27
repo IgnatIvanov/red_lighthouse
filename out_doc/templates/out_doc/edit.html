@@ -102,7 +102,7 @@
                 document.getElementById("father_tattoo_input").value = "";
                 document.getElementById("mother_tattoo_input").value = "";
 
-                // Показвываем поля                
+                // Показываем поля                
                 document.getElementById("breed_input").hidden = false;
                 document.getElementById("rkf_input").hidden = false;
                 document.getElementById("region_input").hidden = false;
@@ -120,6 +120,157 @@
                 document.getElementById("mother_tattoo_input").hidden = false;
             };
         };
+
+
+
+        async function loadJudgesBlock() {
+            // Создание блока назначения судей
+
+
+            // Закрываем вкладку, если она открыта
+            closeIfOpen('judges_accordion');
+
+            // Если вкладка закрыта
+            // то очищаем таблицу с записями о назначении судей и рингов
+            current_state = document.getElementById('judges_accordion').checked;
+            if (!current_state) {
+                let judges_table = document.querySelector('#judges_table');
+                judges_table.innerHTML = '';
+                return;
+            }
+
+
+            // Получаем csrf-token
+            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            // Определяем параметры запроса на backend
+            let url = "{% url 'get_judges' %}";
+            let header = {'X-CSRFToken': csrftoken};
+            let _json = {
+                "project_id": '{{ project_id }}'
+            };
+
+            // Выполняем запрос. Ждём ответа от сервера.
+            let judges_dict = await fetch(url, {
+                method: 'POST',
+                body: JSON.stringify(_json),
+                headers: header,
+            })
+            .then((response) => response.json())
+            .then((data) => {
+
+
+                // Заполнение списка для подстановки судей
+                all_opitions = ''
+                for (key in data['unique_judges_list']) {
+                    
+                    // let judges_datalist = document.querySelector('#unique_judges');
+                    el = data['unique_judges_list'][key]
+                    // new_option = document.createElement("option");
+                    // new_option.value = el;
+                    new_option = `<option value="${el}"></option>`
+                    all_opitions += new_option
+                };
+
+                // Получаем список автоподстановки судей
+                let judges_datalist = document.querySelector('#unique_judges');
+                // let breed_label = document.createElement("option");
+                // Заполняем список
+                judges_datalist.innerHTML = all_opitions
+                // judges_datalist.appendChild(all_opitions);
+
+
+                for (key in data['judges_data']) {
+
+                    // Получаем текущую запись
+                    el = data['judges_data'][key]
+
+                    // Создание объекта строки
+                    let tr = document.createElement('tr');
+
+                    // Добавление левого поля в строку
+                    // Содержит полное название события и породу
+                    let left_field = document.createElement('td');
+                    let event_label = document.createElement("label");
+                    let breed_label = document.createElement("label");
+                    event_label.innerHTML = el['event_str'] + '<br/>'
+                    breed_label.innerHTML = el['breed_str']
+                    left_field.appendChild(event_label);
+                    left_field.appendChild(breed_label);
+                    tr.appendChild(left_field);
+
+                    // Добавление правого поля в строку
+                    // Содержит судью и ринг
+                    let right_field = document.createElement('td');
+                    right_field.innerHTML = `                    
+                    <table>
+                        <tr>
+                            <td>Судья</td>
+                            <td>
+                                <input list="unique_judges" 
+                                    id=judge_id_${el['judges_id']} 
+                                    type="text" 
+                                    value="${el['judge']}"
+                                    onblur="saveJudges('${el['judges_id']}', 'judge')"> <br>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Ринг</td>
+                            <td>
+                            <input type="text"
+                                value="${el['ring']}"
+                                id=ring_id_${el['judges_id']}
+                                onblur="saveJudges('${el['judges_id']}', 'ring')"> <br>
+                            </td>
+                        </tr>
+                    </table>
+
+                    `
+                    tr.appendChild(right_field);
+
+                    // Добавление строки в таблицу
+                    judges_table.appendChild(tr);
+                }
+            });
+        };
+
+
+            
+        function saveJudges(judges_id, field_name) {
+            // Сохранение данных о назначении судей
+            // Передаёт на сервер json содержащий
+            // judges_id, название поля для записи и новое значение
+            
+
+            // Получаем csrf-token
+            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            // console.log(csrftoken);
+
+            // Получение значения для записи
+            let object_id = field_name + '_id_' + judges_id;
+            // console.log(object_id);
+            const value = document.getElementById(object_id).value;
+            // console.log(value);
+
+            // Определяем параметры запроса на backend
+            let url = "{% url 'save_judges' %}";
+            let header = {'X-CSRFToken': csrftoken};
+            let _json = {
+                "judges_id": judges_id,
+                "field_name": field_name,
+                "value": value
+            };
+
+            // Отправляем данные на сервер
+            fetch(url, {
+                method: 'POST',
+                body: JSON.stringify(_json),
+                headers: header,
+            });
+        };
+            
+        
     </script>
 </head>
 <body>
@@ -304,6 +455,24 @@
         placeholder="Мать" 
         value=""> <br>
 
+    <input type="text" 
+        id="father_name_input" 
+        name="father_name" 
+        placeholder="Кличка папы" 
+        value=""> <br>
+
+    <input type="text" 
+        id="mother_name_input" 
+        name="mother_name" 
+        placeholder="Кличка матери" 
+        value=""> <br>
+
+    <input type="text" 
+        id="short_address_input" 
+        name="short_address" 
+        placeholder="Короткий адрес" 
+        value=""> <br>
+
     <span>{{ error }}</span>
 
     <!-- Список событий -->
@@ -355,6 +524,23 @@
         <option value="{{ el }}"></option>
     {% endfor %}
 </datalist>
+
+
+
+<!-- Блок назначения судей -->
+<datalist id="unique_judges"></datalist>
+<br>
+<div class="accordion">
+    <input id="judges_accordion" type="radio" class="accordion-toggle" name="toggle" />
+    <label 
+        onclick="loadJudgesBlock()">
+        Назначение судей
+    </label>
+    <section>
+        <table id="judges_table"></table>
+    </section>
+</div>
+
 
 
 <br>

@@ -4,6 +4,7 @@ import shutil
 import string
 from zipfile import ZipFile
 from django.http import FileResponse
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from .models import Dog
 from .models import Breed
@@ -27,294 +28,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 templates_path = BASE_DIR / 'out_doc/templates/out_doc/'
 save_dir = BASE_DIR / 'saved_documents/'
-
-
-
-# # Функция печати временных сертификатов
-# def print_temp_sertif(events, temp_path, project_name):
-
-#     test_doc_prep()
-
-#     # Загрузка документа
-#     template_name = 'временный сертификат.docx'
-#     template_file = templates_path / template_name
-
-#     for event in events:
-        
-#         save_path = temp_path / project_name / ('Тестирование ' + event['rank'] + ' ' + event['comment'] + '/')
-    
-#         if not os.path.exists(BASE_DIR / save_path):
-#             os.makedirs(BASE_DIR / save_path)  # Создание пути сохранения файла
-
-#         dogs_list = event['participants_data']
-#         for i in range(len(dogs_list)):
-
-#             doc = DocxTemplate(template_file)
-
-#             dogie = dogs_list[i]
-
-#             sex = '{} \ {}'.format(dogie['sex_ru'], dogie['sex_en'])
-
-#             # Подстановка данных
-#             context = {
-#                 'name': dogie['name'],
-#                 'sex': sex,
-#                 'tattoo': dogie['tattoo'],
-#                 'rkf': dogie['rkf'],
-#                 'birth': dogie['birth_date'],
-#                 'owner': dogie['owner'],
-#                 'breed': dogie['breed']
-#             }
-#             doc.render(context)
-
-#             # Сохранение документа
-#             save_file = save_path / (dogs_list[i]['tattoo'] + '.docx')
-#             doc.save(save_file)
-
-#     return
-
-
-
-# # Создание каталогов для каждого события отдельно
-# def create_events_catalogs(events, temp_path, project_name):
-
-#     # Оформление документа
-#     doc_font_name = 'Times New Roman'
-#     doc_font_size = 12
-#     doc_width = 85
-
-#     # Оформление группы fci
-#     font_fci = Font(
-#         name=doc_font_name,
-#         size=16,
-#         bold=True,
-#     )
-
-#     alignment_fci = Alignment(
-#         horizontal='center',
-#         # vertical='bottom',
-#         # text_rotation=0,
-#         # wrap_text=False,
-#         # shrink_to_fit=False,
-#         # indent=0
-#     )
-
-#     # Оформление породы
-#     font_breed = Font(
-#         name=doc_font_name,
-#         size=doc_font_size,
-#         bold=True,
-#     )
-
-#     alignment_breed = Alignment(
-#         horizontal='center',
-#         wrap_text=True,
-#         vertical='top',
-#         # vertical='bottom',
-#         # text_rotation=0,
-#         # wrap_text=False,
-#         # shrink_to_fit=False,
-#         # indent=0
-#     )
-
-#     # Оформление пола
-#     font_sex = Font(
-#         name=doc_font_name,
-#         size=doc_font_size,
-#         bold=True,
-#         italic=True,
-#     )
-
-#     # Оформление класса
-#     font_class = Font(
-#         name=doc_font_name,
-#         size=doc_font_size,
-#         bold=True,
-#         underline='single',
-#     )
-
-#     # Оформление записи собаки
-#     font_dogie = Font(        
-#         name=doc_font_name,
-#         size=doc_font_size,
-#     )
-    
-#     alignment_dogie = Alignment(
-#         wrap_text=True,
-#         vertical='top',
-#     )
-
-
-
-#     for event in events:
-
-#         # Создание чистого Excel документа
-#         wb = Workbook()
-#         # Делаем единственный лист активным
-#         ws = wb.active
-
-#         ws.column_dimensions['A'].width = doc_width
-
-#         # Путь сохранения нового каталога
-#         save_path = temp_path / project_name
-        
-#         if not os.path.exists(save_path):
-#             os.makedirs(save_path)  # Создание пути сохранения файла
-
-#         save_path = save_path / ('Каталог ' + event['rank'] + ' ' + event['comment'] + '.xlsx')
-
-
-        
-#         dogs_list = event['participants_data']
-
-#         current_fci = ''
-#         current_breed = ''
-#         current_sex = ''
-#         current_class = ''
-#         current_line = 1
-
-#         for i in range(len(dogs_list)):
-#             fci = dogs_list[i]['fci']
-#             dog_id = dogs_list[i]['dog_id']
-#             dog_obj = Dog.objects.filter(id=dog_id).first()
-#             participant_id = dogs_list[i]['participant_id']
-#             breed_obj = Breed.objects.filter(id=dog_obj.breed_id).first()
-#             parts_object = Participant.objects.filter(id=participant_id).first()
-#             class_obj = DogClass.objects.filter(id=parts_object.class_id).first()
-            
-#             if fci != current_fci:
-#                 current_line += 1
-#                 current_fci = fci
-#                 value = str(current_fci) + ' ГРУППА F.C.I.'
-#                 cell = 'A' + str(current_line)
-#                 current_line += 2
-#                 ws[cell] = value
-#                 ws[cell].font = font_fci
-#                 ws[cell].alignment = alignment_fci
-
-#             name_ru = breed_obj.name_ru
-#             country_ru = breed_obj.country_ru
-#             name_en = breed_obj.name_en
-#             country_en = breed_obj.country_en
-#             breed_str = '{} ({}) \ {} ({})'.format(name_ru, country_ru, name_en, country_en)
-
-#             if breed_str != current_breed:
-#                 current_breed = breed_str
-#                 cell = 'A' + str(current_line)
-                
-#                 ws[cell] = current_breed
-#                 ws[cell].font = font_breed
-#                 ws[cell].alignment = alignment_breed
-#                 ws.row_dimensions[current_line].auto_size = True
-#                 current_line += 2
-
-#             sex_str = 'СУКИ \ FEMALES'
-#             if dog_obj.is_male == True:
-#                 sex_str = 'КОБЕЛИ \ MALES'
-
-#             if sex_str != current_sex:
-#                 current_sex = sex_str
-#                 cell = 'A' + str(current_line)
-#                 current_line += 2
-#                 ws[cell] = current_sex
-#                 ws[cell].font = font_sex
-
-#             class_str = 'Класс: {} \ {} class'.format(class_obj.name_ru, class_obj.name_en.capitalize())
-
-#             if class_str != current_class:
-#                 current_class = class_str
-#                 cell = 'A' + str(current_line)
-#                 current_line += 2
-#                 ws[cell] = current_class
-#                 ws[cell].font = font_class
-
-#             dogie_str = ''
-#             dogie_str += str(dogs_list[i]['npp']) + '. '
-#             dogie_str += dogs_list[i]['name'] + ', '
-#             dogie_str += 'д.р. ' + dogs_list[i]['birth_date'] + ', '
-#             dogie_str += dogs_list[i]['tattoo'] + ', '
-
-#             colour_str = dog_obj.colour_ru
-#             if colour_str == '-':
-#                 colour_str = dog_obj.colour_en
-#             dogie_str += colour_str + ', '
-
-#             # Разобраться с вводом родителей собаки
-
-#             # father_obj = Dog.objects.filter(tattoo=dog_obj.father_tattoo).first()
-#             # mother_obj = Dog.objects.filter(tattoo=dog_obj.mother_tattoo).first()
-
-#             # father_name = father_obj.name_ru
-#             # if father_name == '-':
-#             #     father_name = father_obj.name_en
-
-#             # mother_name = mother_obj.name_ru
-#             # if mother_name == '-':
-#             #     mother_name = mother_obj.name_en
-
-#             # dogie_str += father_name + 'X' + mother_name + ', '
-
-#             dogie_str += 'зав. ' + dog_obj.breeder + ', '
-#             dogie_str += 'вл. ' + dog_obj.owner
-
-
-
-#             cell = 'A' + str(current_line)
-#             current_line += 2
-#             ws[cell] = dogie_str
-#             ws[cell].font = font_dogie
-#             ws[cell].alignment = alignment_dogie
-
-        
-#         wb.save(save_path)
-#         del wb
-
-
-
-# # Создание отчётов на каждое событие
-# def create_events_reports(events, temp_path, project_name):
-    
-#     print('Создание отчётов')
-
-#     for event in events:
-
-#         # Путь сохранения нового отчёта
-#         save_path = temp_path / project_name
-        
-#         if not os.path.exists(save_path):
-#             os.makedirs(save_path)  # Создание пути сохранения файла
-
-#         save_path = save_path / ('Отчёт ' + event['rank'] + ' ' + event['comment'] + '.xlsx')
-
-#         # Создание чистого Excel документа
-#         wb = Workbook()
-
-#         # Делаем единственный лист активным
-#         ws = wb.active
-
-#         # Вставка заголовка отчёта
-#         ws['B2'] = 'ИТОГОВЫЙ ОТЧЕТ'
-
-#         ws['B4'] = 'Название кинологической организации'
-#         ws['E4'] = 'МЕЖРЕГИОНАЛЬНАЯ ОБЩЕСТВЕННАЯ ОРГАНИЗАЦИЯ КЛУБ ПЛЕМЕННОГО СОБАКОВОДСТВА "КРАСНЫЙ МАЯК"'
-
-#         ws['B5'] = 'Название выставки'
-#         ws['E5'] = 'СЕРТИФИКАТНАЯ ВЫСТАВКА "КРАСНЫЙ МАЯК"'
-
-#         ws['B6'] = 'Дата проведения'
-#         event_date = event['date']
-#         ws['E6'] = str(event_date)
-
-#         ws['B7'] = 'Город'
-#         ws['E7'] = 'МОСКВА'
-
-#         ws['B8'] = 'Ранг выставки'
-#         ws['E8'] = event['rank']
-
-
-#         # Сохранение текущего отчёта
-#         wb.save(save_path)
-#         del wb 
 
 
 
@@ -416,7 +129,10 @@ def get_participants_data(selected_events_id):
 
         dogie['birth_date'] = dog_obj.birth_date.strftime("%d.%m.%Y")
         dogie['owner'] = dog_obj.owner
-        dogie['breed'] = dog_obj.breeder
+        dogie['breeder'] = dog_obj.breeder
+        dogie['father_name'] = dog_obj.father_name
+        dogie['mother_name'] = dog_obj.mother_name
+        dogie['short_address'] = dog_obj.short_address
 
         dogs_list.append(dogie)
 
@@ -1001,6 +717,9 @@ def project_add_dog(request):
         dog.owner = request.POST.get("owner")
         dog.father_tattoo = request.POST.get("father_tattoo")
         dog.mother_tattoo = request.POST.get("mother_tattoo")
+        dog.father_name = request.POST.get("father_name")
+        dog.mother_name = request.POST.get("mother_name")
+        dog.short_address = request.POST.get("short_address")
         dog.save()
 
         current_dog_id = Dog.objects.filter(tattoo=current_dog_tattoo).first().id
@@ -1057,3 +776,192 @@ def get_dog_by_tattoo(request):
     return {
         'status': 'success',
     }
+
+
+
+def get_judges(request):
+    # Получить информацию о назначенных судьях для конкретного проекта
+    # Запрашивается при выполнении js скрипта на стороне пользователя
+    # Возвращает json с данными о назначенных судьях
+
+
+    # Получение id проекта из тела запроса
+    input_dict = json.loads(request.body)
+    project_id = int()
+    for el in input_dict.values():
+        project_id = int(el)
+
+    
+    # События в проекте
+    events_id = []
+
+    # Словарь назначенных судей
+    judges_dict = {}  # {judges_id, judge_str}
+
+    # Словарь назначенных рингов
+    ring_dict = {}  # {judges_id, ring_str}
+
+    # Для хранения уникальных судей
+    unique_judges_list = []
+    unique_judges_set = set()
+
+    # Загрузка записей о проектах
+    projects_json_path = BASE_DIR / 'projects.json'
+    with open(projects_json_path, 'r', encoding='utf8') as projects_file:
+        projects = json.load(projects_file)
+
+        # Чтение информации о событиях
+        for pr in projects:
+            if pr['id'] == project_id:
+                events_id = pr['events_id']
+
+
+    # Загрузка записей назначенных судей и рингов
+    judges_json_path = BASE_DIR / 'judges.json'
+    with open(judges_json_path, 'r', encoding='utf8') as judges_file:
+        judges_json = json.load(judges_file)
+
+        # Заполнение словарей судей и рингов
+        for el in judges_json:            
+            judges_id = el['judges_id']
+            judge = el['judge']
+            ring = el['ring']
+            judges_dict.setdefault(judges_id, 'Не назначен')
+            judges_dict[judges_id] = judge
+            ring_dict.setdefault(judges_id, 'Не назначен')
+            ring_dict[judges_id] = ring
+
+
+    # Список словарей
+    # в каждом словаре записи о событии, породе, назначенном судье и ринге 
+    judges_data = []                
+    
+    # Для каждого события собрать уникальные породы
+    # и составить пары id события и id породы
+    for event_id in events_id:
+
+        # Получение записей об участниках, записанных на текущее событие
+        parts_objects = Participant.objects.filter(event_id=event_id)
+        breeds_id = []
+
+        # Получение породы каждой собаки
+        for p in parts_objects:
+            dog_id = p.dog_id
+            breed_id = Dog.objects.filter(id=dog_id).first().breed_id
+            breeds_id.append(breed_id)
+
+        
+        # Получение уникальных пород
+        breeds_id_set = set(breeds_id)
+        breeds_id_unique = [b for b in breeds_id_set]
+        breeds_id_unique = sorted(breeds_id_unique)
+
+        # Инициализация данных о назначении судей и рингов
+        for breed_id in breeds_id_unique:
+
+            # Подготовка строки события
+            event_data = get_events_list(event_id)[0]
+            event_date = event_data['date']
+            event_str = str()
+            event_str += event_data['org'] + ', '
+            event_str += event_data['type'] + ', '
+            event_str += event_data['rank'] + ', '
+            event_str += toDateStr(event_date.day) + '.' + toDateStr(event_date.month) + '.' + toDateStr(event_date.year) + ', ' 
+            event_str += event_data['comment']
+
+            # Создание уникального id записи назначения
+            judges_id = str(event_id) + '-' + str(breed_id)
+
+            # Установка значений по умолчанию для словарей загруженных значений
+            judges_dict.setdefault(judges_id, 'Не назначен')
+            ring_dict.setdefault(judges_id, 'Не назначен')
+
+            new_dict = {
+                'judges_id': judges_id,
+                'event_id': event_id,
+                'event_str': event_str,
+                'breed_id': breed_id,
+                'breed_str': Breed.objects.filter(id=breed_id).first().name_ru,
+                'judge': judges_dict[judges_id],
+                'ring': ring_dict[judges_id],
+            }
+            judges_data.append(new_dict)
+
+
+    # Получение списка уникальных судей
+    for el in judges_data:
+        unique_judges_list.append(el['judge'])
+    unique_judges_set = set(unique_judges_list)
+    unique_judges_list = [j for j in unique_judges_set]
+
+
+    res = {
+        'judges_data': judges_data,
+        'unique_judges_list': unique_judges_list
+    }
+    # print(res)
+
+    return HttpResponse(json.dumps( res ))
+
+
+
+def save_judges(request):
+    # Сохранение записи о назначении судьи или ринга в judges.json
+
+
+    judges_json = [] 
+
+
+    # Получение данных для записи из тела запроса
+    input_dict = json.loads(request.body)
+    judges_id = input_dict['judges_id']
+    field_name = input_dict['field_name']
+    value = input_dict['value']
+
+    # Загрузка записей назначенных судей и рингов
+    judges_json_path = BASE_DIR / 'judges.json'
+    with open(judges_json_path, 'r', encoding='utf8') as judges_file:
+        judges_json = json.load(judges_file)
+
+
+    # Перезапись, если запись с указанным judges_id есть
+    IS_ADDED = False
+
+    for i in range(len(judges_json)):
+        record = judges_json[i]
+        current_id = record['judges_id']
+
+        # Если есть запись с текущим judges_id
+        if current_id == judges_id:
+            record[field_name] = value
+            judges_json[i] = record
+            IS_ADDED = True
+            break
+
+
+    # Если записи с текущим judges_id нет,
+    # то добавим новую запись в загруженный словарь с записями
+    if (not IS_ADDED):
+        new_record = {
+            'judges_id': judges_id,
+            'judge': 'Не назначен',
+            'ring': 'Не назначен'
+        }
+        new_record[field_name] = value
+        judges_json.append(new_record)
+
+    # Перезапись judges.json
+    with open(judges_json_path, 'w', encoding='utf8') as outfile:
+        json.dump(
+            judges_json, 
+            outfile, 
+            ensure_ascii=False, 
+            indent=4
+        )
+
+    
+    res = {
+        'write_status': 'success'
+    }
+
+    return HttpResponse(json.dumps( res ))

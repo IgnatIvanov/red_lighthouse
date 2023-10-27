@@ -32,7 +32,10 @@ def dogs_update(request, dog_id):
                 breeder = request.POST.get("breeder"),
                 owner = request.POST.get("owner"),
                 father_tattoo = request.POST.get("father_tattoo"),
-                mother_tattoo = request.POST.get("mother_tattoo")
+                mother_tattoo = request.POST.get("mother_tattoo"),
+                father_name = request.POST.get("father_name"),
+                mother_name = request.POST.get("mother_name"),
+                short_address = request.POST.get("short_address"),
             )
             
             return redirect('dogs_main')
@@ -104,6 +107,9 @@ def dogs_main(request):
         dog.owner = request.POST.get("owner")
         dog.father_tattoo = request.POST.get("father_tattoo")
         dog.mother_tattoo = request.POST.get("mother_tattoo")
+        dog.father_name = request.POST.get("father_name"),
+        dog.mother_name = request.POST.get("mother_name"),
+        dog.short_address = request.POST.get("short_address"),
         dog.save()
 
 

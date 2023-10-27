@@ -20,35 +20,138 @@
             <!-- <h1>Форма по добавлению собаки</h1> -->
             <form method="post">
                 {% csrf_token %}
-                <input list="breeds" type="text" name="breed" placeholder="Порода" value="{{ dog_breed }}"> <br>
-                <input type="text" id="rkf" name="rkf" placeholder="РКФ" value="{{ dog.rkf }}"> <br>
-                <input type="text" id="region" name="region" placeholder="Регион" value="{{ dog.region }}"> <br>
-                <input type="date" id="birth_date" name="birth_date" placeholder="{{ dog.birth_date }}" value="{{ dog_date }}"> <br>
+                <input list="breeds" 
+                    type="text" 
+                    name="breed" 
+                    placeholder="Порода" 
+                    value="{{ dog_breed }}"> <br>
+
+                <input type="text" 
+                    id="rkf" 
+                    name="rkf" 
+                    placeholder="РКФ" 
+                    value="{{ dog.rkf }}"> <br>
+
+                <input type="text" 
+                    id="region" 
+                    name="region" 
+                    placeholder="Регион" 
+                    value="{{ dog.region }}"> <br>
+
+                <input type="date" 
+                    id="birth_date" 
+                    name="birth_date" 
+                    placeholder="{{ dog.birth_date }}" 
+                    value="{{ dog_date }}"> <br>
                 
                 {% if dog.is_male == True %}
-                    <input type="radio" id="male" name="sex" value="male" checked>
+                    <input type="radio" 
+                        id="male" 
+                        name="sex" 
+                        value="male" 
+                        checked>                        
                     <label for="male">Кобель</label> <br>
 
-                    <input type="radio" id="female" name="sex" value="female">
+                    <input type="radio" 
+                        id="female" 
+                        name="sex" 
+                        value="female">
                     <label for="female">Сука</label> <br>
+
                 {% else %}
-                    <input type="radio" id="male" name="sex" value="male">
+                    <input type="radio" 
+                        id="male" 
+                        name="sex" 
+                        value="male">
                     <label for="male">Кобель</label> <br>
 
-                    <input type="radio" id="female" name="sex" value="female" checked>
+                    <input type="radio" 
+                        id="female" 
+                        name="sex" 
+                        value="female" 
+                        checked>
                     <label for="female">Сука</label> <br>
+
                 {% endif %}
 
-                <input type="text" id="tattoo" name="tattoo" placeholder="Клеймо" value="{{ dog.tattoo }}"> <br>
-                <input type="text" id="chip" name="chip" placeholder="Чип" value="{{ dog.chip }}"> <br>
-                <input type="text" id="name_ru" name="name_ru" placeholder="Кличка на русском" value="{{ dog.name_ru }}"> <br>
-                <input type="text" id="name_en" name="name_en" placeholder="Кличка на английском" value="{{ dog.name_en }}"> <br>
-                <input type="text" id="colour_ru" name="colour_ru" placeholder="Окрас на русском" value="{{ dog.colour_ru }}"> <br>
-                <input type="text" id="colour_en" name="colour_en" placeholder="Окрас на английском" value="{{ dog.colour_en }}"> <br>
-                <input type="text" id="breeder" name="breeder" placeholder="Заводчик" value="{{ dog.breeder }}"> <br>
-                <input type="text" id="owner" name="owner" placeholder="Владелец" value="{{ dog.owner }}"> <br>
-                <input type="text" id="father_tattoo" name="father_tattoo" placeholder="Отец" value="{{ dog.father_tattoo }}"> <br>
-                <input type="text" id="mother_tattoo" name="mother_tattoo" placeholder="Мать" value="{{ dog.mother_tattoo }}"> <br>
+                <input type="text" 
+                    id="tattoo" 
+                    name="tattoo" 
+                    placeholder="Клеймо" 
+                    value="{{ dog.tattoo }}"> <br>
+
+                <input type="text" 
+                    id="chip" 
+                    name="chip" 
+                    placeholder="Чип" 
+                    value="{{ dog.chip }}"> <br>
+
+                <input type="text" 
+                    id="name_ru" 
+                    name="name_ru" 
+                    placeholder="Кличка на русском" 
+                    value="{{ dog.name_ru }}"> <br>
+
+                <input type="text" 
+                    id="name_en" 
+                    name="name_en" 
+                    placeholder="Кличка на английском" 
+                    value="{{ dog.name_en }}"> <br>
+
+                <input type="text" 
+                    id="colour_ru" 
+                    name="colour_ru" 
+                    placeholder="Окрас на русском" 
+                    value="{{ dog.colour_ru }}"> <br>
+
+                <input type="text" 
+                    id="colour_en" 
+                    name="colour_en" 
+                    placeholder="Окрас на английском" 
+                    value="{{ dog.colour_en }}"> <br>
+
+                <input type="text" 
+                    id="breeder" 
+                    name="breeder" 
+                    placeholder="Заводчик" 
+                    value="{{ dog.breeder }}"> <br>
+
+                <input type="text" 
+                    id="owner" 
+                    name="owner" 
+                    placeholder="Владелец" 
+                    value="{{ dog.owner }}"> <br>
+
+                <input type="text" 
+                    id="father_tattoo" 
+                    name="father_tattoo" 
+                    placeholder="Клеймо папы" 
+                    value="{{ dog.father_tattoo }}"> <br>
+
+                <input type="text" 
+                    id="mother_tattoo" 
+                    name="mother_tattoo" 
+                    placeholder="Клеймо мамы" 
+                    value="{{ dog.mother_tattoo }}"> <br>
+
+                <input type="text" 
+                    id="father_name" 
+                    name="father_name" 
+                    placeholder="Кличка папы" 
+                    value="{{ dog.father_name }}"> <br>
+
+                <input type="text" 
+                    id="mother_name" 
+                    name="mother_name" 
+                    placeholder="Кличка мамы" 
+                    value="{{ dog.mother_name }}"> <br>
+
+                <input type="text" 
+                    id="short_address" 
+                    name="short_address" 
+                    placeholder="Короткий адрес" 
+                    value="{{ dog.short_address }}"> <br>
+
                 <span>{{ error }}</span>
                 {% if dog_id %}
                     <button class="btn btn-success" type="submit" name="btn" value="update" formaction="{% url 'dogs_update' dog_id %}">Изменить</button>
@@ -86,6 +189,9 @@
                     <th>owner</th>
                     <th>father_tattoo</th>
                     <th>mother_tattoo</th>
+                    <th>father_name</th>
+                    <th>mother_name</th>
+                    <th>short_address</th>
                 </tr>
                 {% for el in dogs %}
                     <tr>
@@ -105,6 +211,9 @@
                         <td>{{ el.owner }}</td>
                         <td>{{ el.father_tattoo }}</td>
                         <td>{{ el.mother_tattoo }}</td>
+                        <td>{{ el.father_name }}</td>
+                        <td>{{ el.mother_name }}</td>
+                        <td>{{ el.short_address }}</td>
                     </tr>
                 {% endfor %}
             {% else %}
