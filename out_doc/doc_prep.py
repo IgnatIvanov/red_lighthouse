@@ -15,6 +15,7 @@ from docx.shared import Pt, RGBColor
 from docx.enum.text import WD_UNDERLINE
 from docx.enum.text import WD_LINE_SPACING  # Для установки междустрочных интервалов
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.table import WD_ALIGN_VERTICAL
 
 from .models import Dog
 from .models import Breed
@@ -75,7 +76,7 @@ def print_temp_sertif(events, temp_path, project_name):
                 'rkf': dogie['rkf'],
                 'birth': dogie['birth_date'],
                 'owner': dogie['owner'],
-                'breed': dogie['breed']
+                'breed': dogie['breeder']
             }
             doc.render(context)
 
@@ -83,7 +84,7 @@ def print_temp_sertif(events, temp_path, project_name):
             # save_file_name = dogs_list[i]['tattoo'] + '.docx'
             punct = string.punctuation
             punct = punct.replace('.', '')
-            save_file_name = dogs_list[i]['tattoo'].translate(str.maketrans('', '', punct)) + '.docx'
+            save_file_name = dogie['tattoo'].translate(str.maketrans('', '', punct)) + '.docx'
 
             # Сохранение документа
             save_file = save_path / save_file_name
@@ -97,18 +98,144 @@ def print_temp_sertif(events, temp_path, project_name):
 def create_events_catalogs(events, temp_path, project_name):
 
 
+    # Загрузка документа
+    template_name = 'оглавление.docx'
+    template_file = templates_path / template_name
+
+
     for event in events:
 
         # Создание объекта документа
-        document = Document()
+        document = Document(template_file)
 
         # Применение форматирования ко всему документу
         style = document.styles['Normal']
         style.font.name = 'Times New Roman'
-        # p = document.add_paragraph(event_field + '\n')
 
 
         dogs_list = event['participants_data']
+
+        # ===========================================================================
+        # Работа с оглавлением
+
+        table = document.tables[0]
+
+        header_lines = []
+        start_npp = {}
+        end_npp = {}
+
+        # Сбор данных для наполнения каталога
+        for i in range(len(dogs_list)):
+
+            dogie = dogs_list[i]
+            npp = dogie['npp']
+            dog_id = dogs_list[i]['dog_id']
+            dog_obj = Dog.objects.filter(id=dog_id).first()
+            breed_obj = Breed.objects.filter(id=dog_obj.breed_id).first()
+
+            breed_line = '{} ({}) \ {} ({})'.format(
+                breed_obj.name_ru,
+                breed_obj.country_ru,
+                breed_obj.name_en,
+                breed_obj.country_en
+            )
+
+            line = {
+                'fci': dogie['fci'],
+                'breed_id': breed_obj.bid,
+                'breed': breed_line,
+                'count': 1,
+                'start_npp': npp,
+                'end_npp': npp,
+                'npp': npp,
+            }
+            header_lines.append(line)
+
+
+        # Уплотнение
+        for i in range(len(header_lines)-1, 0, -1):
+            current_line = header_lines[i]
+            prev_line = header_lines[i - 1]
+            if current_line['breed_id'] == prev_line['breed_id']:
+                header_lines[i - 1]['count'] += 1
+                header_lines[i - 1]['end_npp'] = header_lines[i]['end_npp']
+                header_lines.pop(i)
+
+
+        # Добавление тела таблицы
+        current_fci = -1
+        for i in range(len(header_lines)):
+
+            line = header_lines[i]
+            fci = line['fci']
+            breed = line['breed']
+            breed_id = line['breed_id']
+            count = line['count']
+            start_npp = line['start_npp']
+            end_npp = line['end_npp']
+            
+            
+            # Добавление заголовка группы FCI
+            if fci != current_fci:
+                row = table.add_row()
+                current_fci = fci
+                value = str(current_fci) + ' ГРУППА F.C.I.'
+                p = row.cells[0].paragraphs[0]
+                run = p.add_run(value)
+                run.font.bold = True
+                run.font.size = Pt(14)
+                p_fmt = p.paragraph_format
+                p_fmt.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                row.cells[0].merge(row.cells[3])
+
+            # Добавление записи
+            # Добавление новой строки
+            row = table.add_row()
+
+            # Добавление кода породы
+            p = row.cells[0].paragraphs[0]
+            value = str(breed_id)
+            run = p.add_run(value)
+            run.font.size = Pt(12)
+            p_fmt = p.paragraph_format        
+            p_fmt.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            row.cells[0].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+
+            # Добавление названия породы
+            p = row.cells[1].paragraphs[0]
+            run = p.add_run(breed)
+            run.font.size = Pt(12)
+
+            # Добавление количества собак
+            p = row.cells[2].paragraphs[0]
+            value = str(count)
+            run = p.add_run(value)
+            run.font.size = Pt(12)
+            p_fmt = p.paragraph_format        
+            p_fmt.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            row.cells[2].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+
+            # Добавления номеров начала и конца
+            if start_npp == end_npp:
+                p = row.cells[3].paragraphs[0]
+                value = str(start_npp)
+                run = p.add_run(value)
+                run.font.size = Pt(12)
+                p_fmt = p.paragraph_format        
+                p_fmt.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                row.cells[3].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+            else:
+                p = row.cells[3].paragraphs[0]
+                value = '{} - {}'.format(start_npp, end_npp)
+                run = p.add_run(value)
+                run.font.size = Pt(12)
+                p_fmt = p.paragraph_format        
+                p_fmt.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                row.cells[3].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+
+        # Конец работы с оглавлением
+        # ===========================================================================
+
 
         current_fci = ''
         current_breed = ''
@@ -128,7 +255,6 @@ def create_events_catalogs(events, temp_path, project_name):
             # Добавление заголовка группы FCI
             if fci != current_fci:
 
-                # current_line += 1
                 # Вставка группы FCI в документ
                 current_fci = fci
                 p = document.add_paragraph()
@@ -143,15 +269,6 @@ def create_events_catalogs(events, temp_path, project_name):
                 p_fmt.line_spacing_rule = WD_LINE_SPACING.SINGLE
                 p_fmt.space_before = Pt(6)
                 p_fmt.space_after = Pt(12)
-                # p.bold = True
-
-                # Форматирование заголовка
-                # p.add_run('bold').bold = True
-                # cell = 'A' + str(current_line)
-                # current_line += 2
-                # ws[cell] = value
-                # ws[cell].font = font_fci
-                # ws[cell].alignment = alignment_fci
 
             name_ru = breed_obj.name_ru
             country_ru = breed_obj.country_ru
@@ -163,7 +280,6 @@ def create_events_catalogs(events, temp_path, project_name):
             if breed_str != current_breed:
                 current_breed = breed_str
                 p = document.add_paragraph()
-                # value = str(current_fci) + ' ГРУППА F.C.I.'
                 run = p.add_run(current_breed)
 
                 # форматирование раздела породы
@@ -205,14 +321,6 @@ def create_events_catalogs(events, temp_path, project_name):
                 p_fmt.space_before = Pt(0)
                 p_fmt.space_after = Pt(0)
 
-                # cell = 'A' + str(current_line)
-                
-                # ws[cell] = current_breed
-                # ws[cell].font = font_breed
-                # ws[cell].alignment = alignment_breed
-                # ws.row_dimensions[current_line].auto_size = True
-                # current_line += 2
-
 
             sex_str = 'СУКИ \ FEMALES'
             if dog_obj.is_male == True:
@@ -225,7 +333,6 @@ def create_events_catalogs(events, temp_path, project_name):
 
                 # форматирование раздела пола
                 run.font.bold = True
-                # run.font.underline = WD_UNDERLINE.SINGLE
                 run.font.italic = True
                 run.font.size = Pt(12)
                 p_fmt = p.paragraph_format
@@ -233,10 +340,6 @@ def create_events_catalogs(events, temp_path, project_name):
                 p_fmt.line_spacing_rule = WD_LINE_SPACING.SINGLE
                 p_fmt.space_before = Pt(0)
                 p_fmt.space_after = Pt(0)
-                # cell = 'A' + str(current_line)
-                # current_line += 2
-                # ws[cell] = current_sex
-                # ws[cell].font = font_sex
 
             # Добавление раздела класса
             class_str = 'Класс: {} \ {} class'.format(class_obj.name_ru, class_obj.name_en.capitalize())
@@ -255,12 +358,7 @@ def create_events_catalogs(events, temp_path, project_name):
                 p_fmt.line_spacing_rule = WD_LINE_SPACING.SINGLE
                 p_fmt.space_before = Pt(0)
                 p_fmt.space_after = Pt(0)
-                # cell = 'A' + str(current_line)
-                # current_line += 2
-                # ws[cell] = current_class
-                # ws[cell].font = font_class
 
-            # dogie_str = ''
             # Создаём объект абзаца собаки
             dogie_paragragh = document.add_paragraph()
 
@@ -326,16 +424,6 @@ def create_events_catalogs(events, temp_path, project_name):
             # Добавление кортокого адреса            
             run = dogie_paragragh.add_run(dogs_list[i]['short_address'] + '.')
             run.font.size = Pt(12)
-
-
-
-            # cell = 'A' + str(current_line)
-            # current_line += 2
-            # ws[cell] = dogie_str
-            # ws[cell].font = font_dogie
-            # ws[cell].alignment = alignment_dogie
-            # p = document.add_paragraph()
-            # p.add_run(dogie_str)
 
 
         # Путь сохранения нового каталога
@@ -427,27 +515,29 @@ def create_events_reports(events, temp_path, project_name):
 
         # Записываем остальных участников в таблицу
         for dogie in participants_data:
-            pass
+            # pass
             # Копирование предыдущей строки
-            for cur_row in range(50):
-                try:
-                    # Пробуем скопировать ячейку предыдущей строки
-                    # ws[current_str][row].value = ws[current_str - 1][row].value
-                    # ws[current_str][row].fill = ws[current_str - 1][row].fill
-                    ws.cell(row=cur_row, column=current_str).fill = ws.cell(row=cur_row, column=current_str - 1).fill
+            # for cur_row in range(50):
+            #     try:
+            #         # Пробуем скопировать ячейку предыдущей строки
+            #         # ws[current_str][row].value = ws[current_str - 1][row].value
+            #         # ws[current_str][row].fill = ws[current_str - 1][row].fill
+            #         ws.cell(row=cur_row, column=current_str).fill = ws.cell(row=cur_row, column=current_str - 1).fill
                     
-                except:
-                    # Пропускаем, если ячейка не заполнена
-                    # print("An exception occurred")
-                    continue
+            #     except Exception as err:
+            #         # Пропускаем, если ячейка не заполнена
+            #         # print("An exception occurred")
+            #         print('Can`t copy format from previous string')
+            #         print(err)
+            #         continue
                 # ws[current_str][row].value = ws[current_str - 1][row].value
-            # ws['A' + str(current_str)] = first_dogie['breed_ru']
-            # ws['B' + str(current_str)] = 'Судья не прочитан'
-            # ws['C' + str(current_str)] = first_dogie['npp']
-            # ws['D' + str(current_str)] = first_dogie['name']
-            # ws['E' + str(current_str)] = first_dogie['birth_date']
-            # ws['F' + str(current_str)] = first_dogie['rkf']
-            # ws['G' + str(current_str)] = first_dogie['class_ru']
+            ws['A' + str(current_str)] = dogie['breed_ru']
+            ws['B' + str(current_str)] = 'Судья не прочитан'
+            ws['C' + str(current_str)] = dogie['npp']
+            ws['D' + str(current_str)] = dogie['name']
+            ws['E' + str(current_str)] = dogie['birth_date']
+            ws['F' + str(current_str)] = dogie['rkf']
+            ws['G' + str(current_str)] = dogie['class_ru']
             # ws.rows[current_str].value = ws.rows[current_str - 1].value
 
             # for row in ws.rows:
@@ -711,3 +801,78 @@ def create_open_list(events, temp_path, project_name):
 
     document.save(save_path)
     del document
+
+
+
+# Создание дипломов
+def create_diploms(events, temp_path, project_name):
+    
+
+    # Загрузка документа
+    template_name = 'диплом.docx'
+    template_file = templates_path / template_name
+
+    for event in events:
+
+        save_path = temp_path / project_name / ('Дипломы ' + event['rank'] + ' ' + event['comment'])
+    
+        if not os.path.exists(BASE_DIR / save_path):
+            os.makedirs(BASE_DIR / save_path)  # Создание пути сохранения файла
+
+
+        event_type = event['type']
+        event_rank = event['rank']
+        event_comment = event['comment']
+        event_date = '{}.{}.{}'.format(
+            toDateStr(event['date'].day), 
+            toDateStr(event['date'].month), 
+            toDateStr(event['date'].year),
+        )
+
+        event_name = str()
+        if event_type == 'Монопородная':
+            event_name = '{} {}'.format(
+                event_type,
+                event_comment
+            ).upper()
+        else:
+            event_name = '{} выставка {}'.format(
+                event_type,
+                event_rank
+            ).upper()
+
+        dogs_list = event['participants_data']
+        for i in range(len(dogs_list)):
+
+            dogie = dogs_list[i]
+            dog_id = dogs_list[i]['dog_id']
+            dog_obj = Dog.objects.filter(id=dog_id).first()
+            breed_obj = Breed.objects.filter(id=dog_obj.breed_id).first()
+
+            # Подстановка данных
+            context = {
+                'event_name': event_name,
+                'event_date': event_date,
+                'breed_name': dogie['breed_ru'],
+                'breed_country': breed_obj.country_ru,
+                'dog_name': dogie['name'],
+                'npp': dogie['npp'],
+                'sex': dogie['sex_ru'].lower(),
+                'class': dogie['class_ru'],
+                'owner': dogie['owner'],
+                'colour': dog_obj.colour_ru,
+            }
+            doc = DocxTemplate(template_file)
+            doc.render(context)
+
+            # Заменяем в клейме все знаки препинания на точки
+            punct = string.punctuation
+            punct = punct.replace('.', '')
+            save_file_name = dogie['tattoo'].translate(str.maketrans('', '', punct)) + '.docx'
+
+            # Сохранение документа
+            save_file = save_path / save_file_name
+            doc.save(save_file)
+
+
+    return

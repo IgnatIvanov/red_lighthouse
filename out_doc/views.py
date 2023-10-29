@@ -566,6 +566,11 @@ def create_project_doc(request, project_id):
         if request.POST.get("events_parts_open_list_checkbox") == 'on':
             # Создание открытого списка учатников
             create_open_list(events, temp_path, project_name)
+
+        # Проверка запроса открытого списка учатников excel в проекте
+        if request.POST.get("diplom_checkbox") == 'on':
+            # Создание открытого списка учатников
+            create_diploms(events, temp_path, project_name)
         
         # Подготовка документов к отправке
         # Обход готовых файлов проекта
